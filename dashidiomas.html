@@ -1,0 +1,1278 @@
+<!-- ==================== MÓDULO DE PRÁTICA DE IDIOMAS - COLE NO SEU dash.html ==================== -->
+
+<!-- Substitua toda a seção page-idiomas por este código: -->
+
+<section class="page-section" id="page-idiomas">
+    <!-- Header do Módulo -->
+    <div class="language-header">
+        <h1>
+            <span style="font-size: 2.5rem;">🌎</span>
+            Prática de Idiomas com IA
+        </h1>
+        <p>Pratique inglês e espanhol com nosso assistente virtual. Aprenda através de conversas reais, receba feedback de pronúncia e acompanhe seu progresso!</p>
+        
+        <!-- Seletor de Idioma -->
+        <div class="language-selector" style="margin-top: 25px;">
+            <div class="language-option active" id="lang-ingles" onclick="selecionarIdioma('ingles')">
+                <div class="flag">🇺🇸</div>
+                <h3>Inglês</h3>
+                <p>English Practice</p>
+            </div>
+            <div class="language-option" id="lang-espanhol" onclick="selecionarIdioma('espanhol')">
+                <div class="flag">🇪🇸</div>
+                <h3>Espanhol</h3>
+                <p>Práctica de Español</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sistema de Estágios -->
+    <div class="stages-container">
+        <div class="stages-header">
+            <h2>📊 Seu Progresso</h2>
+            <div id="xp-display" style="display: flex; align-items: center; gap: 10px;">
+                <span style="color: var(--warning);">⭐</span>
+                <span id="xp-points" style="font-weight: 600; color: var(--warning);">0 XP</span>
+            </div>
+        </div>
+        
+        <div class="stages-progress">
+            <div class="stage active" id="stage-iniciante">
+                <div class="stage-icon">🌱</div>
+                <div class="stage-label">Iniciante</div>
+                <div class="stage-desc">Básico do idioma</div>
+            </div>
+            <div class="stage" id="stage-basico">
+                <div class="stage-icon">📖</div>
+                <div class="stage-label">Básico</div>
+                <div class="stage-desc">Conversas simples</div>
+            </div>
+            <div class="stage" id="stage-intermediario">
+                <div class="stage-icon">💬</div>
+                <div class="stage-label">Intermediário</div>
+                <div class="stage-desc">Diálogos naturais</div>
+            </div>
+            <div class="stage" id="stage-avancado">
+                <div class="stage-icon">🎯</div>
+                <div class="stage-label">Avançado</div>
+                <div class="stage-desc">Fluência total</div>
+            </div>
+        </div>
+        
+        <!-- Barra de Progresso do Estágio Atual -->
+        <div style="margin-top: 25px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span id="current-stage-name" style="font-weight: 600;">Iniciante</span>
+                <span id="stage-progress-text">0 / 100 XP</span>
+            </div>
+            <div class="progress-bar" style="height: 12px; background: var(--gray-light); border-radius: 6px;">
+                <div id="stage-progress-bar" class="progress-fill red" style="width: 0%; border-radius: 6px; transition: width 0.5s ease;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cenários de Conversa -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="2" y1="12" x2="22" y2="12"/>
+                    <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </svg>
+                🎭 Cenários de Conversa
+            </h3>
+            <select class="form-control" id="cenario-select" onchange="mudarCenario()" style="width: auto; padding: 10px 15px;">
+                <option value="restaurante">🍽️ Restaurante</option>
+                <option value="cafe">☕ Café</option>
+                <option value="loja">🛍️ Loja de Roupas</option>
+                <option value="aeroporto">✈️ Aeroporto</option>
+                <option value="hotel">🏨 Hotel</option>
+                <option value="hospital">🏥 Hospital</option>
+                <option value="escola">🏫 Escola</option>
+                <option value="festa">🎉 Festa</option>
+                <option value="supermercado">🛒 Supermercado</option>
+                <option value="cinema">🎬 Cinema</option>
+                <option value="academia">💪 Academia</option>
+                <option value="random">🎲 Conversa Aleatória</option>
+            </select>
+        </div>
+
+        <!-- Descrição do Cenário -->
+        <div id="cenario-desc" style="background: var(--darker); padding: 20px; border-radius: 12px; margin-bottom: 20px; border-left: 4px solid var(--primary);">
+            <p style="color: var(--gray);">Você está em um restaurante. O garçom vai até sua mesa para tomar o pedido.</p>
+        </div>
+
+        <!-- Área de Chat -->
+        <div class="chat-area">
+            <div class="chat-area-header">
+                <h3>
+                    <div class="online-indicator"></div>
+                    <span id="bot-name">Alex</span>
+                    <span style="color: var(--gray); font-weight: normal; font-size: 0.9rem;">(Assistente de Idiomas)</span>
+                </h3>
+                <div class="chat-area-status">
+                    <span id="voice-status">🎤 Clique no microfone para falar</span>
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chat-messages-idiomas">
+                <!-- Mensagens serão inseridas via JS -->
+            </div>
+
+            <!-- Controles de Áudio e Voz -->
+            <div class="voice-controls">
+                <button class="voice-btn listen" id="mic-btn" onclick="toggleVoiceInput()" title="Clique para falar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                        <line x1="12" y1="19" x2="12" y2="23"/>
+                        <line x1="8" y1="23" x2="16" y2="23"/>
+                    </svg>
+                </button>
+                
+                <button class="voice-btn secondary" onclick="repetirUltimaMensagem()" title="Repetir mensagem">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 4 15 12 5 20 5 4"/>
+                        <line x1="19" y1="5" x2="19" y2="19"/>
+                    </svg>
+                </button>
+                
+                <button class="voice-btn secondary" onclick="traduzirConversa()" title="Traduzir conversa">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="2" y1="12" x2="22" y2="12"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/>
+                    </svg>
+                </button>
+
+                <div class="voice-input">
+                    <input type="text" id="input-idioma" placeholder="Ou digite sua resposta aqui..." onkeypress="if(event.key==='Enter')enviarMensagemIdioma()">
+                </div>
+
+                <button class="send-btn" onclick="enviarMensagemIdioma()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                    Enviar
+                </button>
+            </div>
+        </div>
+
+        <!-- Feedback de Pronúncia -->
+        <div class="pronunciation-feedback" id="pronunciation-feedback">
+            <div class="pronunciation-header">
+                <h4>📝 Feedback de Pronúncia</h4>
+                <span class="pronunciation-score" id="pronunciation-score">85%</span>
+            </div>
+            <div class="pronunciation-details" id="pronunciation-details">
+                <!-- Detalhes serão inseridos via JS -->
+            </div>
+        </div>
+
+        <!-- Dicas e Vocabulário -->
+        <div id="dicas-container" style="margin-top: 20px;">
+            <div class="ai-response">
+                <h4>💡 Dica do Cenário</h4>
+                <p id="cenario-dica">Neste cenário, você pode usar frases como "I'd like..." para fazer pedidos de forma educada.</p>
+            </div>
+        </div>
+
+        <!-- Frases Úteis -->
+        <div style="margin-top: 20px;">
+            <h4 style="margin-bottom: 15px; color: var(--white);">📚 Frases Úteis para este Cenário</h4>
+            <div id="frases-uteis" style="display: grid; gap: 10px;">
+                <!-- Frases serão inseridas via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Estatísticas de Aprendizado -->
+    <div class="grid-3" style="margin-top: 30px;">
+        <div class="stat-card">
+            <div class="stat-icon red">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <h3 id="total-conversas">0</h3>
+                <p>Conversas Completas</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon green">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                    <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <h3 id="palavras-certas">0</h3>
+                <p>Palavras Corretas</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon orange">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+            </div>
+            <div class="stat-info">
+                <h3 id="media-precisao">0%</h3>
+                <p>Precisão Média</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ==================== JAVASCRIPT DO MÓDULO DE IDIOMAS ==================== -->
+<script>
+// ==================== BANCO DE DADOS LOCAL ====================
+const LanguageDB = {
+    init() {
+        if (!localStorage.getItem('languageDB_inicializado')) {
+            this.salvar('progresso', {
+                xp: 0,
+                nivel: 'iniciante',
+                conversas: 0,
+                palavrasCertas: 0,
+                tentativas: 0,
+                historico: []
+            });
+            localStorage.setItem('languageDB_inicializado', 'true');
+        }
+    },
+
+    salvar(chave, dados) {
+        localStorage.setItem(`language_${chave}`, JSON.stringify(dados));
+    },
+
+    carregar(chave) {
+        const dados = localStorage.getItem(`language_${chave}`);
+        return dados ? JSON.parse(dados) : null;
+    },
+
+    adicionarXP(pontos) {
+        const progresso = this.carregar('progresso') || { xp: 0, nivel: 'iniciante', conversas: 0, palavrasCertas: 0, tentativas: 0, historico: [] };
+        progresso.xp += pontos;
+        progresso.tentativas += 1;
+        
+        // Atualizar nível
+        if (progresso.xp >= 500) progresso.nivel = 'avancado';
+        else if (progresso.xp >= 300) progresso.nivel = 'intermediario';
+        else if (progresso.xp >= 100) progresso.nivel = 'basico';
+        
+        this.salvar('progresso', progresso);
+        return progresso;
+    },
+
+    registrarConversa(palavrasCertas, totalPalavras) {
+        const progresso = this.carregar('progresso') || { xp: 0, nivel: 'iniciante', conversas: 0, palavrasCertas: 0, tentativas: 0, historico: [] };
+        progresso.conversas += 1;
+        progresso.palavrasCertas += palavrasCertas;
+        this.salvar('progresso', progresso);
+        return progresso;
+    }
+};
+
+// ==================== CENÁRIOS DE CONVERSA ====================
+const cenarios = {
+    ingles: {
+        restaurante: {
+            titulo: "No Restaurante",
+            emoji: "🍽️",
+            descricao: "Você está em um restaurante. O garçom chega à sua mesa para perguntar o que você gostaria de pedir.",
+            botName: "Waiter",
+            contexto: "O garçom está esperando seu pedido",
+            dicas: "Use 'I'd like...' para fazer pedidos educadamente. Ex: 'I'd like the pasta, please.'",
+            frasesUteis: [
+                { frase: "I'd like the menu, please.", traducao: "Eu gostaria do cardápio, por favor." },
+                { frase: "What do you recommend?", traducao: "O que você recomenda?" },
+                { frase: "I'll have the steak, please.", traducao: "Eu vou pedir a carne, por favor." },
+                { frase: "Can I have some water?", traducao: "Posso ter um pouco de água?" },
+                { frase: "The check, please.", traducao: "A conta, por favor." }
+            ],
+            dialogoInicial: "Good evening! Welcome to our restaurant. Are you ready to order, or would you like a few more minutes?",
+            respostas: [
+                { usuario: "menu", bot: "Here is our menu. We have a variety of dishes including pasta, steak, fish, and salads. Our special today is the grilled salmon. What would you like?" },
+                { usuario: "recommend", bot: "I recommend our famous pasta carbonara or the grilled salmon. Both are excellent choices! Which one sounds good to you?" },
+                { usuario: "pasta", bot: "Excellent choice! Our carbonara is made with fresh pasta, cream, bacon, and parmesan. Would you like anything to drink with that?" },
+                { usuario: "water", bot: "Of course! I'll bring you a glass of water right away. Are you ready to order, or do you need a few more minutes?" },
+                { usuario: "bill", bot: "Certainly! Here's your bill. We accept cash and all major credit cards. Thank you for dining with us! Have a great evening!" }
+            ]
+        },
+        cafe: {
+            titulo: "No Café",
+            emoji: "☕",
+            descricao: "Você entra em uma cafeteria aconchegante. O barista está atrás do balcão preparando bebidas.",
+            botName: "Barista",
+            contexto: "O barista está pronto para anotar seu pedido",
+            dicas: "Em cafeterias, você pode pedir 'I'd like a...' ou 'Can I have a...'. Lembre-se de pedir o tamanho!",
+            frasesUteis: [
+                { frase: "Can I have a latte, please?", traducao: "Posso tomar um latte, por favor?" },
+                { frase: "What sizes do you have?", traducao: "Que tamanhos vocês têm?" },
+                { frase: "I'd like it with oat milk.", traducao: "Eu gostaria com leite de aveia." },
+                { frase: "How much is that?", traducao: "Quanto custa isso?" },
+                { frase: "Can I have a receipt?", traducao: "Posso ter um recibo?" }
+            ],
+            dialogoInicial: "Hi there! Welcome to Coffee House. What can I get for you today?",
+            respostas: [
+                { usuario: "latte", bot: "Sure! Would you like a small, medium, or large? We also have oat, almond, and soy milk options." },
+                { usuario: "medium", bot: "Great! A medium latte. Anything else for you? We have fresh pastries and muffins too." },
+                { usuario: "muffin", bot: "Our blueberry muffins are fresh today! They're delicious with coffee. Would you like one?" },
+                { usuario: "yes", bot: "Perfect! That will be one medium latte and one blueberry muffin. That'll be $7.50. Your name please?" },
+                { usuario: "name", bot: "Thanks! Your order will be ready in about 5 minutes. Feel free to take a seat!" }
+            ]
+        },
+        loja: {
+            titulo: "Loja de Roupas",
+            emoji: "🛍️",
+            descricao: "Você está em uma loja de roupas. Uma vendedora se aproxima para ajudar.",
+            botName: "Sales Assistant",
+            contexto: "A vendedora quer saber se você precisa de ajuda",
+            dicas: "Para pedir ajuda, use 'Can you help me?' ou 'I'm looking for...'. Para provar roupas, pergunte 'Where is the fitting room?'",
+            frasesUteis: [
+                { frase: "I'm looking for a shirt.", traducao: "Estou procurando uma camisa." },
+                { frase: "Can I try this on?", traducao: "Posso experimentar isso?" },
+                { frase: "Where is the fitting room?", traducao: "Onde é o provador?" },
+                { frase: "Do you have this in a different size?", traducao: "Vocês têm isso em um tamanho diferente?" },
+                { frase: "How much does it cost?", traducao: "Quanto custa?" }
+            ],
+            dialogoInicial: "Hello! Welcome to Fashion Store. Can I help you find something today?",
+            respostas: [
+                { usuario: "shirt", bot: "Of course! We have a great selection of shirts. What color are you looking for? We have blue, white, pink, and black." },
+                { usuario: "blue", bot: "Great choice! This blue shirt is very popular. Would you like to try it on? The fitting rooms are over there." },
+                { usuario: "try", bot: "Sure! Go ahead and try it on. Let me know if you need a different size. I'll be right here." },
+                { usuario: "size", bot: "What size do you wear? I can check if we have it in stock. We have sizes from XS to XXL." },
+                { usuario: "expensive", bot: "This shirt is on sale for $29.99, down from $49.99. It's a great deal! Would you like to buy it?" }
+            ]
+        },
+        aeroporto: {
+            titulo: "No Aeroporto",
+            emoji: "✈️",
+            descricao: "Você está no aeroporto e precisa fazer check-in para seu voo.",
+            botName: "Airport Agent",
+            contexto: "O agente de check-in está pronto para ajudar",
+            dicas: "Para check-in, você pode precisar do 'boarding pass' e 'passport'. Diga 'I'd like to check in' para começar.",
+            frasesUteis: [
+                { frase: "I'd like to check in, please.", traducao: "Eu gostaria de fazer check-in, por favor." },
+                { frase: "Where is the check-in counter?", traducao: "Onde é o balcão de check-in?" },
+                { frase: "What time does the flight board?", traducao: "A que horas o voo embarca?" },
+                { frase: "Can I have a window seat?", traducao: "Posso ter uma janela?" },
+                { frase: "Is my flight on time?", traducao: "Meu voo está no horário?" }
+            ],
+            dialogoInicial: "Good morning! Welcome to the airport. Are you here to check in for your flight?",
+            respostas: [
+                { usuario: "yes", bot: "Great! Can I see your passport and booking confirmation, please? What destination are you flying to today?" },
+                { usuario: "new york", bot: "Perfect! Flight 456 to New York. You're checked in. Would you like a window or aisle seat?" },
+                { usuario: "window", bot: "Excellent! I've assigned you seat 12A, a window seat. Your boarding pass is ready. The gate is B12, and boarding begins at 2:30 PM." },
+                { usuario: "luggage", bot: "You can check one bag up to 23 kilograms. Is that all your luggage? Do you have any liquids over 100ml in your carry-on?" },
+                { usuario: "no", bot: "Perfect! Everything looks good. Here's your boarding pass and luggage tag. Have a great flight to New York!" }
+            ]
+        },
+        hotel: {
+            titulo: "No Hotel",
+            emoji: "🏨",
+            descricao: "Você chega a um hotel e vai até a recepção para fazer o check-in.",
+            botName: "Receptionist",
+            contexto: "O recepcionista está pronto para fazer seu check-in",
+            dicas: "Para fazer check-in, diga 'I have a reservation' ou 'I'd like to check in'. Para Wi-Fi, pergunte 'What's the Wi-Fi password?'",
+            frasesUteis: [
+                { frase: "I have a reservation.", traducao: "Eu tenho uma reserva." },
+                { frase: "What is the Wi-Fi password?", traducao: "Qual é a senha do Wi-Fi?" },
+                { frase: "What time is breakfast served?", traducao: "A que horas servem o café da manhã?" },
+                { frase: "Can I have a wake-up call?", traducao: "Posso ter um despertador?" },
+                { frase: "I'd like to check out, please.", traducao: "Eu gostaria de fazer check-out, por favor." }
+            ],
+            dialogoInicial: "Welcome to Grand Hotel! Do you have a reservation with us?",
+            respostas: [
+                { usuario: "yes", bot: "Perfect! What name is the reservation under? I'll look it up for you." },
+                { usuario: "johnson", bot: "Here it is! Mr. Johnson, you have a reservation for 3 nights. What type of room would you like - king or queen bed?" },
+                { usuario: "king", bot: "Excellent choice! Room 405 on the 4th floor. Here's your key card. Breakfast is served from 7 AM to 10 AM in the main restaurant." },
+                { usuario: "wifi", bot: "Of course! The Wi-Fi network is 'GrandHotel_Guest' and the password is 'welcome2024'. The password is the same for all floors." },
+                { usuario: "checkout", bot: "Certainly! Your total for 3 nights is $450. How would you like to pay - credit card or cash?" }
+            ]
+        },
+        hospital: {
+            titulo: "No Hospital",
+            emoji: "🏥",
+            descricao: "Você está em um hospital e precisa se comunicar com a enfermeira.",
+            botName: "Nurse",
+            contexto: "A enfermeira está disponível para ajudar",
+            dicas: "Em situações médicas, seja claro. Use 'I feel...' para descrever como você se sente. Para dor, diga 'I have a pain in...'",
+            frasesUteis: [
+                { frase: "I don't feel well.", traducao: "Eu não estou me sentindo bem." },
+                { frase: "I have a headache.", traducao: "Eu tenho dor de cabeça." },
+                { frase: "Where is the emergency room?", traducao: "Onde é o pronto-socorro?" },
+                { frase: "I need to see a doctor.", traducao: "Eu preciso ver um médico." },
+                { frase: "I'm allergic to...", traducao: "Eu sou alérgico a..." }
+            ],
+            dialogoInicial: "Hello! I'm Nurse Sarah. How can I help you today? Are you feeling okay?",
+            respostas: [
+                { usuario: "headache", bot: "I'm sorry to hear that. How long have you had the headache? Is it a sharp pain or a dull ache? Any other symptoms?" },
+                { usuario: "since morning", bot: "I see. Let me check your temperature. Please open your mouth and say 'ahhh'. Your temperature is normal, that's good." },
+                { usuario: "medicine", bot: "I'll give you some pain medication. Take one tablet now and another in 6 hours if needed. Drink plenty of water and rest." },
+                { usuario: "allergy", bot: "Good question! Are you allergic to any medications? This is important for your safety." },
+                { usuario: "penicillin", bot: "Noted! No penicillin. I'll make sure the doctor knows about your allergy. Is there anything else you need?" }
+            ]
+        },
+        escola: {
+            titulo: "Na Escola",
+            emoji: "🏫",
+            descricao: "Você está na escola e precisa falar com o professor sobre uma tarefa.",
+            botName: "Teacher",
+            contexto: "O professor está na sala de aula",
+            dicas: "Para falar com professores, seja educado. Use 'Excuse me, Professor...' ou 'Can I ask you a question?'",
+            frasesUteis: [
+                { frase: "Can I ask you a question?", traducao: "Posso te fazer uma pergunta?" },
+                { frase: "I don't understand the homework.", traducao: "Eu não entendo a lição de casa." },
+                { frase: "When is the exam?", traducao: "Quando é a prova?" },
+                { frase: "Can I go to the bathroom?", traducao: "Posso ir ao banheiro?" },
+                { frase: "I need help with this exercise.", traducao: "Eu preciso de ajuda com este exercício." }
+            ],
+            dialogoInicial: "Good morning, class! Today we'll be learning about photosynthesis. Does anyone have any questions before we begin?",
+            respostas: [
+                { usuario: "question", bot: "Of course! What's your question? I'm here to help you understand the material." },
+                { usuario: "homework", bot: "The homework is to read chapter 5 and answer questions 1 through 5. It's due next Monday. Do you have any specific questions about it?" },
+                { usuario: "exam", bot: "Good question! The exam will be next Friday. It will cover chapters 1 through 5. I recommend studying the photosynthesis unit carefully." },
+                { usuario: "bathroom", bot: "Yes, you may go. Please be quick and return quietly. Take the hall pass on your way out." },
+                { usuario: "help", bot: "Of course! Let me show you how to solve this. First, you need to identify the main verb in the sentence..." }
+            ]
+        },
+        festa: {
+            titulo: "Na Festa",
+            emoji: "🎉",
+            descricao: "Você está em uma festa e quer conhecer novas pessoas.",
+            botName: "Party Guest",
+            contexto: "Você encontra alguém interessante para conversar",
+            dicas: "Para iniciar conversas, use 'Hi!' ou 'Nice to meet you!'. Pergunte 'What do you do for fun?' para conhecer interesses.",
+            frasesUteis: [
+                { frase: "Hi! I'm [name].", traducao: "Oi! Eu sou o [nome]." },
+                { frase: "Nice to meet you!", traducao: "Prazer em te conhecer!" },
+                { frase: "What do you do for fun?", traducao: "O que você faz por diversão?" },
+                { frase: "Do you come here often?", traducao: "Você vem aqui frequentemente?" },
+                { frase: "Would you like something to drink?", traducao: "Você gostaria de algo para beber?" }
+            ],
+            dialogoInicial: "Hi there! I don't think we've met. I'm Alex. What's your name?",
+            respostas: [
+                { usuario: "name", bot: "Nice to meet you, [name]! Are you a friend of the host, or did you just move to the neighborhood?" },
+                { usuario: "friend", bot: "That's great! How long have you known Sarah? She's an amazing person, isn't she?" },
+                { usuario: "years", bot: "Wow, that's a long time! So you probably know all the best spots in town. What do you do for fun around here?" },
+                { usuario: "movies", bot: "Nice! There's a great new cinema downtown. Have you seen the latest Marvel movie? It's supposed to be amazing!" },
+                { usuario: "no", bot: "You should check it out! Maybe we could go together sometime. Here's my number - text me if you're interested!" }
+            ]
+        },
+        supermercado: {
+            titulo: "No Supermercado",
+            emoji: "🛒",
+            descricao: "Você está no supermercado e precisa encontrar alguns produtos.",
+            botName: "Store Employee",
+            contexto: "Você encontra um funcionário para pedir ajuda",
+            dicas: "Para pedir ajuda, diga 'Excuse me, where can I find...?' Para pagar, use 'I'll pay by credit card'.",
+            frasesUteis: [
+                { frase: "Excuse me, where is the milk?", traducao: "Com licença, onde está o leite?" },
+                { frase: "How much does this cost?", traducao: "Quanto custa isso?" },
+                { frase: "Do you have a loyalty card?", traducao: "Vocês têm cartão de fidelidade?" },
+                { frase: "I'll pay by credit card.", traducao: "Vou pagar com cartão de crédito." },
+                { frase: "Can I have a bag, please?", traducao: "Posso ter um saco, por favor?" }
+            ],
+            dialogoInicial: "Hello! Welcome to Fresh Market. Can I help you find anything today?",
+            respostas: [
+                { usuario: "milk", bot: "Sure! The milk is in the dairy section, which is down this aisle on your left. We have whole, skim, and almond milk." },
+                { usuario: "almond", bot: "Great choice! Our almond milk is on sale this week. It's in the same aisle, about halfway down on the right side." },
+                { usuario: "total", bot: "Your total is $24.50. Will that be cash or credit card? We also accept debit cards and mobile payments." },
+                { usuario: "card", bot: "Perfect! Insert or tap your card when you're ready. Don't forget to enter your PIN." },
+                { usuario: "bag", bot: "Of course! Would you like a plastic bag or a paper bag? We also have reusable bags for sale if you'd like one." }
+            ]
+        },
+        cinema: {
+            titulo: "No Cinema",
+            emoji: "🎬",
+            descricao: "Você está no cinema想买 pipoca e ver um filme.",
+            botName: "Ticket Clerk",
+            contexto: "O funcionário do cinema está pronto para ajudar",
+            dicas: "Para comprar ingresso, diga 'I'd like two tickets for...'. Para pipoca, pergunte 'What sizes of popcorn do you have?'",
+            frasesUteis: [
+                { frase: "What movies are playing?", traducao: "Que filmes estão passando?" },
+                { frase: "I'd like two tickets, please.", traducao: "Eu gostaria de dois ingressos, por favor." },
+                { frase: "What time is the next showing?", traducao: "A que horas é a próxima sessão?" },
+                { frase: "Can I have a large popcorn?", traducao: "Posso ter uma pipoca grande?" },
+                { frase: "Where is screen 3?", traducao: "Onde é a sala 3?" }
+            ],
+            dialogoInicial: "Welcome to City Cinema! What can I help you with today? Tickets, snacks, or both?",
+            respostas: [
+                { usuario: "tickets", bot: "Great! What movie would you like to see? We have action, comedy, drama, and horror films playing today." },
+                { usuario: "action", bot: "Perfect! 'Super Hero 4' is showing at 2:00, 5:00, and 8:00 PM. Would you like tickets for one of those showings?" },
+                { usuario: "eight", bot: "Excellent choice! Two tickets for the 8:00 PM showing of 'Super Hero 4'. That'll be $30.00." },
+                { usuario: "popcorn", bot: "Of course! We have small, medium, and large popcorn. The large comes with a free refill. What size would you like?" },
+                { usuario: "medium", bot: "Great! One medium popcorn. Would you like butter on that? Your total with snacks is $38.50." }
+            ]
+        },
+        academia: {
+            titulo: "Na Academia",
+            emoji: "💪",
+            descricao: "Você está na academia e quer fazer exercícios.",
+            botName: "Trainer",
+            contexto: "O personal trainer está disponível para ajudar",
+            dicas: "Para pedir ajuda com equipamentos, diga 'Can you show me how to use this?' ou 'I'm looking for a good workout'.",
+            frasesUteis: [
+                { frase: "Can you show me how to use this?", traducao: "Você pode me mostrar como usar isso?" },
+                { frase: "I'm looking for a good workout.", traducao: "Estou procurando um bom treino." },
+                { frase: "How many sets should I do?", traducao: "Quantas séries eu devo fazer?" },
+                { frase: "Where are the dumbbells?", traducao: "Onde estão os halteres?" },
+                { frase: "I need a spotter.", traducao: "Eu preciso de um observador." }
+            ],
+            dialogoInicial: "Hey there! Welcome to Fitness Plus. Are you new here? Can I help you with anything?",
+            respostas: [
+                { usuario: "new", bot: "Welcome! Let me show you around. We have cardio equipment on the first floor and weights on the second floor. What are your fitness goals?" },
+                { usuario: "muscle", bot: "Great! For building muscle, I recommend focusing on compound exercises like squats, deadlifts, and bench press. How experienced are you with weight training?" },
+                { usuario: "beginner", bot: "No problem! I'll show you the proper form. Let's start with the machines, which are safer for beginners. Follow me!" },
+                { usuario: "dumbbells", bot: "The dumbbells are on the second floor, near the mirror. They range from 5 to 50 pounds. Start light and work your way up!" },
+                { usuario: "sets", bot: "For beginners, I recommend 3 sets of 10-12 repetitions. Rest 60-90 seconds between sets. Remember to breathe properly!" }
+            ]
+        },
+        random: {
+            titulo: "Conversa Aleatória",
+            emoji: "🎲",
+            descricao: "Conversa livre sobre diversos temas do dia a dia.",
+            botName: "Chat Partner",
+            contexto: "Conversa casual sobre temas variados",
+            dicas: "Use esta opção para praticar conversas gerais. Tente falar sobre seus hobbies, família, ou planos para o fim de semana!",
+            frasesUteis: [
+                { frase: "What are you doing this weekend?", traducao: "O que você vai fazer neste fim de semana?" },
+                { frase: "I love spending time with my family.", traducao: "Eu amo passar tempo com minha família." },
+                { frase: "What are your hobbies?", traducao: "Quais são seus hobbies?" },
+                { frase: "Have you traveled anywhere interesting?", traducao: "Você viajou para algum lugar interessante?" },
+                { frase: "I really enjoy learning new things.", traducao: "Eu realmente gosto de aprender coisas novas." }
+            ],
+            dialogoInicial: "Hey! Great to chat with you today. What would you like to talk about? We can discuss anything - your day, hobbies, travel, anything you're interested in!",
+            respostas: [
+                { usuario: "weekend", bot: "Nice! I hope you have fun plans. What do you usually do on weekends? Do you prefer staying home or going out?" },
+                { usuario: "family", bot: "That's wonderful! Family time is so important. Do you have siblings? What do you all like to do together?" },
+                { usuario: "hobbies", bot: "Hobbies are great for relaxation! What are some things you enjoy doing in your free time? Any sports, games, or creative activities?" },
+                { usuario: "travel", bot: "Traveling is amazing! There's nothing like experiencing new cultures. Have you been to any interesting places? Or is there somewhere you've always wanted to go?" },
+                { usuario: "learn", bot: "I love that attitude! Learning new things keeps our minds sharp. What languages are you learning besides English? What other skills would you like to develop?" }
+            ]
+        }
+    },
+    espanhol: {
+        restaurante: {
+            titulo: "En el Restaurante",
+            emoji: "🍽️",
+            descricao: "Estás en un restaurante. El camarero llega a tu mesa para tomar tu pedido.",
+            botName: "Camarero",
+            contexto: "El camarero está esperando tu pedido",
+            dicas: "Para pedir, usa 'Me gustaría...' o 'Quisiera...'. Sé educado diciendo 'por favor' y 'gracias'.",
+            frasesUteis: [
+                { frase: "Me gustaría ver el menú, por favor.", traducao: "Eu gostaria de ver o cardápio, por favor." },
+                { frase: "¿Qué me recomienda?", traducao: "O que você me recomenda?" },
+                { frase: "Quisiera la pasta, por favor.", traducao: "Eu gostaria da massa, por favor." },
+                { frase: "¿Puedo tener agua?", traducao: "Posso ter água?" },
+                { frase: "La cuenta, por favor.", traducao: "A conta, por favor." }
+            ],
+            dialogoInicial: "¡Buenas tardes! Bienvenido a nuestro restaurante. ¿Está listo para ordenar o necesita unos minutos más?",
+            respuestas: [
+                { usuario: "menú", bot: "¡Aquí tiene nuestro menú! Tenemos una variedad de platos incluyendo pasta, carne, pescado y ensaladas. Nuestro especial de hoy es el salmon a la plancha. ¿Qué le gustaría?" },
+                { usuario: "recomienda", bot: "¡Le recomiendo nuestra famosa pasta carbonara o el salmon a la plancha! Ambos son excelentes opciones. ¿Cuál le parece mejor?" },
+                { usuario: "pasta", bot: "¡Excelente elección! Nuestra carbonara se hace con pasta fresca, crema, tocino y parmesano. ¿Le gustaría algo de beber?" },
+                { usuario: "agua", bot: "¡Claro! Le traigo un vaso de agua ahora mismo. ¿Está listo para ordenar o necesita más tiempo?" },
+                { usuario: "cuenta", bot: "¡Con mucho gusto! Aquí tiene su cuenta. Aceptamos efectivo y todas las tarjetas de crédito. ¡Gracias por visitarnos! ¡Que tenga una excelente tarde!" }
+            ]
+        },
+        cafe: {
+            titulo: "En la Cafetería",
+            emoji: "☕",
+            descricao: "Entras en una cafetería acogedora. El barista está detrás del mostrador preparando bebidas.",
+            botName: "Barista",
+            contexto: "El barista está listo para tomar tu pedido",
+            dicas: "En cafeterías, pide 'Un café con...' para especificar cómo lo quieres. ¡No olvides el tamaño!",
+            frasesUteis: [
+                { frase: "Un café con leche, por favor.", traducao: "Um café com leite, por favor." },
+                { frase: "¿Qué tamaños tienen?", traducao: "Que tamanhos vocês têm?" },
+                { frase: "Lo quiero con leche de avena.", traducao: "Eu quero com leite de aveia." },
+                { frase: "¿Cuánto cuesta?", traducao: "Quanto custa?" },
+                { frase: "¿Puedo tener el recibo?", traducao: "Posso ter o recibo?" }
+            ],
+            dialogoInicial: "¡Hola! Bienvenido a Café Casa. ¿Qué le puedo servir hoy?",
+            respuestas: [
+                { usuario: "café", bot: "¡Claro! ¿Prefiere pequeño, mediano o grande? También tenemos opciones de leche de avena, almendra y soja." },
+                { usuario: "mediano", bot: "¡Perfecto! Un café con leche mediano. ¿Algo más? ¡Tenemos pasteles y magdalenas frescas también!" },
+                { usuario: "magdalena", bot: "¡Nuestras magdalenas de arándano están frescas hoy! Quedan deliciosas con el café. ¿Le gustaría una?" },
+                { usuario: "sí", bot: "¡Perfecto! Un café con leche mediano y una magdalena de arándano. Son $7.50. ¿Su nombre, por favor?" },
+                { usuario: "nombre", bot: "¡Gracias! Su pedido estará listo en unos 5 minutos. ¡Puede sentarse mientras espera!" }
+            ]
+        },
+        loja: {
+            titulo: "En la Tienda de Ropa",
+            emoji: "🛍️",
+            descricao: "Estás en una tienda de ropa. Una vendedora se acerca para ayudarte.",
+            botName: "Vendedora",
+            contexto: "La vendedora quiere saber si necesitas ayuda",
+            dicas: "Para pedir ayuda, usa '¿Me puede ayudar?' o 'Estoy buscando...'. Para probarte ropa, pregunta '¿Dónde está el probador?'",
+            frasesUteis: [
+                { frase: "Estoy buscando una camisa.", traducao: "Estou procurando uma camisa." },
+                { frase: "¿Puedo probarme esto?", traducao: "Posso experimentar isso?" },
+                { frase: "¿Dónde está el probador?", traducao: "Onde é o provador?" },
+                { frase: "¿Tiene esto en otra talla?", traducao: "Vocês têm isso em outro tamanho?" },
+                { frase: "¿Cuánto cuesta?", traducao: "Quanto custa?" }
+            ],
+            dialogoInicial: "¡Hola! Bienvenida a Tienda Fashion. ¿Puedo ayudarla a encontrar algo hoy?",
+            respuestas: [
+                { usuario: "camisa", bot: "¡Claro! Tenemos una gran selección de camisas. ¿De qué color está buscando? Tenemos azul, blanco, rosa y negro." },
+                { usuario: "azul", bot: "¡Excelente elección! Esta camisa azul es muy popular. ¿Quiere probarse? Los probadores están allá." },
+                { usuario: "probar", bot: "¡Claro! Adelante, pruébesela. Dígame si necesita otra talla. ¡Estoy aquí!" },
+                { usuario: "talla", bot: "¿Qué talla usa? Puedo verificar si la tenemos en stock. ¡Tenemos tallas desde la XS hasta la XXL!" },
+                { usuario: "cara", bot: "Esta camisa está en oferta por $29.99, rebajada de $49.99. ¡Es una gran oferta! ¿Le gustaría comprarla?" }
+            ]
+        },
+        aeroporto: {
+            titulo: "En el Aeropuerto",
+            emoji: "✈️",
+            descricao: "Estás en el aeropuerto y necesitas hacer check-in para tu vuelo.",
+            botName: "Agente de Aeropuerto",
+            contexto: "El agente de check-in está listo para ayudarte",
+            dicas: "Para check-in, necesitas tu 'pasaporte' y 'billete'. Di 'Quiero hacer check-in' para comenzar.",
+            frasesUteis: [
+                { frase: "Quiero hacer check-in, por favor.", traducao: "Eu quero fazer check-in, por favor." },
+                { frase: "¿Dónde está el mostrador de check-in?", traducao: "Onde é o balcão de check-in?" },
+                { frase: "¿A qué hora sale el vuelo?", traducao: "A que horas sai o voo?" },
+                { frase: "¿Puedo tener asiento de ventana?", traducao: "Posso ter assento na janela?" },
+                { frase: "¿Mi vuelo está a tiempo?", traducao: "Meu voo está no horário?" }
+            ],
+            dialogoInicial: "¡Buenos días! Bienvenido al aeropuerto. ¿Viene a hacer check-in para su vuelo?",
+            respuestas: [
+                { usuario: "sí", bot: "¡Perfecto! ¿Puede mostrarme su pasaporte y confirmación de reserva, por favor? ¿A qué destino viaja hoy?" },
+                { usuario: "nueva york", bot: "¡Excelente! Vuelo 456 a Nueva York. Ya está registrado. ¿Prefiere asiento de pasillo o ventana?" },
+                { usuario: "ventana", bot: "¡Excelente! Le asigné el asiento 12A, junto a la ventana. Su tarjeta de embarque está lista. La puerta es B12 y el abordaje comienza a las 14:30." },
+                { usuario: "equipaje", bot: "Puede facturar una maleta de hasta 23 kilogramos. ¿Es todo su equipaje? ¿Tiene líquidos de más de 100ml en su equipaje de mano?" },
+                { usuario: "no", bot: "¡Perfecto! Todo está en orden. Aquí tiene su tarjeta de embarque y etiqueta de equipaje. ¡Que tenga un excelente vuelo a Nueva York!" }
+            ]
+        },
+        hotel: {
+            titulo: "En el Hotel",
+            emoji: "🏨",
+            descricao: "Llegas a un hotel y vas a la recepción para hacer el check-in.",
+            botName: "Recepcionista",
+            contexto: "La recepcionista está lista para hacer tu check-in",
+            dicas: "Para check-in, di 'Tengo una reserva' o 'Quiero hacer check-in'. Para Wi-Fi, pregunta '¿Cuál es la contraseña del Wi-Fi?'",
+            frasesUteis: [
+                { frase: "Tengo una reserva.", traducao: "Eu tenho uma reserva." },
+                { frase: "¿Cuál es la contraseña del Wi-Fi?", traducao: "Qual é a senha do Wi-Fi?" },
+                { frase: "¿A qué hora sirven el desayuno?", traducao: "A que horas servem o café da manhã?" },
+                { frase: "¿Puedo tener una llamada de despertador?", traducao: "Posso ter uma ligação de despertador?" },
+                { frase: "Quiero hacer check-out, por favor.", traducao: "Eu quero fazer check-out, por favor." }
+            ],
+            dialogoInicial: "¡Bienvenido a Gran Hotel! ¿Tiene una reserva con nosotros?",
+            respuestas: [
+                { usuario: "sí", bot: "¡Perfecto! ¿A nombre de quién está la reserva? La buscaré para usted." },
+                { usuario: "johnson", bot: "¡Aquí está! Señor Johnson, tiene una reserva por 3 noches. ¿Qué tipo de habitación prefiere - cama king o queen?" },
+                { usuario: "king", bot: "¡Excelente elección! Habitación 405 en el cuarto piso. Aquí tiene su tarjeta. El desayuno se sirve de 7 a 10 AM en el restaurante principal." },
+                { usuario: "wifi", bot: "¡Claro! La red Wi-Fi es 'GranHotel_Huésped' y la contraseña es 'bienvenido2024'. Es la misma para todos los pisos." },
+                { usuario: "checkout", bot: "¡Con mucho gusto! Su total por 3 noches es $450. ¿Cómo desea pagar - tarjeta de crédito o efectivo?" }
+            ]
+        },
+        hospital: {
+            titulo: "En el Hospital",
+            emoji: "🏥",
+            descricao: "Estás en un hospital y necesitas comunicarte con la enfermera.",
+            botName: "Enfermera",
+            contexto: "La enfermera está disponible para ayudar",
+            dicas: "En situaciones médicas, sé claro. Usa 'Me siento...' para describir cómo te sientes. Para dolor, di 'Me duele...'",
+            frasesUteis: [
+                { frase: "No me siento bien.", traducao: "Eu não estou me sentindo bem." },
+                { frase: "Me duele la cabeza.", traducao: "Eu tenho dor de cabeça." },
+                { frase: "¿Dónde está la sala de emergencias?", traducao: "Onde é o pronto-socorro?" },
+                { frase: "Necesito ver a un médico.", traducao: "Eu preciso ver um médico." },
+                { frase: "Soy alérgico a...", traducao: "Eu sou alérgico a..." }
+            ],
+            dialogoInicial: "¡Hola! Soy la enfermera Sarah. ¿Cómo puedo ayudarlo hoy? ¿Se siente bien?",
+            respuestas: [
+                { usuario: "cabeza", bot: "Lamento escuchar eso. ¿Cuánto tiempo tiene el dolor de cabeza? ¿Es un dolor agudo o sordo? ¿Tiene otros síntomas?" },
+                { usuario: "mañana", bot: "Entiendo. Déjeme verificar su temperatura. Por favor, abra la boca y diga 'aaaah'. Su temperatura es normal, eso es bueno." },
+                { usuario: "medicina", bot: "Le daré un medicamento para el dolor. Tome una tableta ahora y otra en 6 horas si es necesario. Beba mucha agua y descanse." },
+                { usuario: "alergia", bot: "¡Buena pregunta! ¿Es alérgico a algún medicamento? Esto es importante para su seguridad." },
+                { usuario: "penicilina", bot: "¡Anotado! Sin penicilina. Me aseguraré de que el médico sepa de su alergia. ¿Necesita algo más?" }
+            ]
+        },
+        escola: {
+            titulo: "En la Escuela",
+            emoji: "🏫",
+            descricao: "Estás en la escuela y necesitas hablar con el profesor sobre una tarea.",
+            botName: "Profesor",
+            contexto: "El profesor está en el aula",
+            dicas: "Para hablar con profesores, sé educado. Usa 'Disculpe, Profesor...' o '¿Puedo hacerle una pregunta?'",
+            frasesUteis: [
+                { frase: "¿Puedo hacerle una pregunta?", traducao: "Posso te fazer uma pergunta?" },
+                { frase: "No entiendo la tarea.", traducao: "Eu não entendo a lição." },
+                { frase: "¿Cuándo es el examen?", traducao: "Quando é a prova?" },
+                { frase: "¿Puedo ir al baño?", traducao: "Posso ir ao banheiro?" },
+                { frase: "Necesito ayuda con este ejercicio.", traducao: "Eu preciso de ajuda com este exercício." }
+            ],
+            dialogoInicial: "¡Buenos días, clase! Hoy aprenderemos sobre la fotosíntesis. ¿Tiene alguien alguna pregunta antes de comenzar?",
+            respuestas: [
+                { usuario: "pregunta", bot: "¡Claro! ¿Cuál es su pregunta? Estoy aquí para ayudarlo a entender el material." },
+                { usuario: "tarea", bot: "La tarea es leer el capítulo 5 y responder las preguntas de la 1 a la 5. Es para el próximo lunes. ¿Tiene alguna pregunta específica?" },
+                { usuario: "examen", bot: "¡Buena pregunta! El examen será el próximo viernes. Cubrirá los capítulos del 1 al 5. Recomiendo estudiar bien la unidad de fotosíntesis." },
+                { usuario: "baño", bot: "¡Sí, puede ir! Sea rápido y regrese silenciosamente. Lleve el pase de pasillo al salir." },
+                { usuario: "ayuda", bot: "¡Claro! Déjame mostrarte cómo resolver esto. Primero, necesitas identificar el verbo principal de la oración..." }
+            ]
+        },
+        festa: {
+            titulo: "En la Fiesta",
+            emoji: "🎉",
+            descricao: "Estás en una fiesta y quieres conocer nuevas personas.",
+            botName: "Invitado",
+            contexto: "Conoces a alguien interesante para conversar",
+            dicas: "Para iniciar conversaciones, usa '¡Hola!' o '¡Mucho gusto!'. Pregunta '¿Qué te gusta hacer?' para conocer intereses.",
+            frasesUteis: [
+                { frase: "¡Hola! Me llamo [nombre].", traducao: "Oi! Meu nome é [nome]." },
+                { frase: "¡Mucho gusto!", traducao: "Prazer em te conhecer!" },
+                { frase: "¿Qué te gusta hacer?", traducao: "O que você gosta de fazer?" },
+                { frase: "¿Vienes aquí a menudo?", traducao: "Você vem aqui frequentemente?" },
+                { frase: "¿Quieres algo de beber?", traducao: "Você gostaria de algo para beber?" }
+            ],
+            dialogoInicial: "¡Hola! Creo que no nos conocemos. Me llamo Alex. ¿Y tú? ¿Cómo te llamas?",
+            respuestas: [
+                { usuario: "nombre", bot: "¡Mucho gusto, [nombre]! ¿Eres amigo del anfitrión o te acabas de mudar al barrio?" },
+                { usuario: "amigo", bot: "¡Genial! ¿Cuánto tiempo conoces a Sarah? Es una persona increíble, ¿verdad?" },
+                { usuario: "años", bot: "¡Vaya, eso es mucho tiempo! Así que probablemente conoces los mejores lugares de la ciudad. ¿Qué te gusta hacer aquí?" },
+                { usuario: "películas", bot: "¡Genial! Hay un cine nuevo genial en el centro. ¿Has visto la última película de Marvel? ¡Dicen que es increíble!" },
+                { usuario: "no", bot: "¡Deberías verla! Quizás podríamos ir juntos algún día. Aquí tienes mi número - ¡escríbeme si te interesa!" }
+            ]
+        },
+        supermercado: {
+            titulo: "En el Supermercado",
+            emoji: "🛒",
+            descricao: "Estás en el supermercado y necesitas encontrar algunos productos.",
+            botName: "Empleado",
+            contexto: "Encuentras un empleado para pedir ayuda",
+            dicas: "Para pedir ayuda, di 'Disculpe, ¿dónde puedo encontrar...?' Para pagar, usa 'Pagaré con tarjeta'.",
+            frasesUteis: [
+                { frase: "Disculpe, ¿dónde está la leche?", traducao: "Com licença, onde está o leite?" },
+                { frase: "¿Cuánto cuesta esto?", traducao: "Quanto custa isso?" },
+                { frase: "¿Tiene tarjeta de fidelidad?", traducao: "Vocês têm cartão de fidelidade?" },
+                { frase: "Pagaré con tarjeta de crédito.", traducao: "Vou pagar com cartão de crédito." },
+                { frase: "¿Puedo tener una bolsa, por favor?", traducao: "Posso ter um saco, por favor?" }
+            ],
+            dialogoInicial: "¡Hola! Bienvenido a Mercado Fresco. ¿Puedo ayudarlo a encontrar algo hoy?",
+            respuestas: [
+                { usuario: "leche", bot: "¡Claro! La leche está en la sección de lácteos, que está abajo en este pasillo a su izquierda. Tenemos entera, descremada y de almendra." },
+                { usuario: "almendra", bot: "¡Excelente elección! Nuestra leche de almendra está en oferta esta semana. Está en el mismo pasillo, aproximadamente a la mitad a la derecha." },
+                { usuario: "total", bot: "Su total es $24.50. ¿Efectivo o tarjeta de crédito? También aceptamos tarjetas de débito y pagos móviles." },
+                { usuario: "tarjeta", bot: "¡Perfecto! Inserte o acerque su tarjeta cuando esté listo. No olvide introducir su PIN." },
+                { usuario: "bolsa", bot: "¡Claro! ¿Prefiere bolsa de plástico o de papel? También tenemos bolsas reutilizables a la venta si desea una." }
+            ]
+        },
+        cinema: {
+            titulo: "En el Cine",
+            emoji: "🎬",
+            descricao: "Estás en el cine y quieres comprar palomitas y ver una película.",
+            botName: "Empleado del Cine",
+            contexto: "El empleado del cine está listo para ayudar",
+            dicas: "Para comprar boletos, di 'Quiero dos boletos para...'. Para palomitas, pregunta '¿Qué tamaños de palomitas tienen?'",
+            frasesUteis: [
+                { frase: "¿Qué películas están pasando?", traducao: "Que filmes estão passando?" },
+                { frase: "Quiero dos boletos, por favor.", traducao: "Eu quero dois ingressos, por favor." },
+                { frase: "¿A qué hora es la próxima función?", traducao: "A que horas é a próxima sessão?" },
+                { frase: "¿Puedo tener palomitas grandes?", traducao: "Posso ter pipoca grande?" },
+                { frase: "¿Dónde está la sala 3?", traducao: "Onde é a sala 3?" }
+            ],
+            dialogoInicial: "¡Bienvenido a Cine Ciudad! ¿Qué puedo hacer por usted hoy? ¿Boletos, bocadillos, o ambos?",
+            respuestas: [
+                { usuario: "boletos", bot: "¡Genial! ¿Qué película le gustaría ver? Tenemos acción, comedia, drama y terror hoy." },
+                { usuario: "acción", bot: "¡Perfecto! 'Héroe 4' está en funciones a las 14:00, 17:00 y 20:00. ¿Le gustaría boletos para alguna de esas funciones?" },
+                { usuario: "ocho", bot: "¡Excelente elección! Dos boletos para la función de las 20:00 de 'Héroe 4'. Son $30.00." },
+                { usuario: "palomitas", bot: "¡Claro! Tenemos palomitas pequeñas, medianas y grandes. La grande viene con relleno gratis. ¿Qué tamaño desea?" },
+                { usuario: "mediana", bot: "¡Genial! Una paleta mediana. ¿Le gustaría mantequilla? Su total con bocadillos es $38.50." }
+            ]
+        },
+        academia: {
+            titulo: "En el Gimnasio",
+            emoji: "💪",
+            descricao: "Estás en el gimnasio y quieres hacer ejercicio.",
+            botName: "Entrenador",
+            contexto: "El entrenador personal está disponible para ayudar",
+            dicas: "Para pedir ayuda con equipos, di '¿Puede mostrarme cómo usar esto?' o 'Busco un buen entrenamiento'.",
+            frasesUteis: [
+                { frase: "¿Puede mostrarme cómo usar esto?", traducao: "Você pode me mostrar como usar isso?" },
+                { frase: "Busco un buen entrenamiento.", traducao: "Estou procurando um bom treino." },
+                { frase: "¿Cuántas series debo hacer?", traducao: "Quantas séries eu devo fazer?" },
+                { frase: "¿Dónde están las pesas?", traducao: "Onde estão os halteres?" },
+                { frase: "Necesito un observador.", traducao: "Eu preciso de um observador." }
+            ],
+            dialogoInicial: "¡Hola ahí! Bienvenido a Fitness Plus. ¿Es nuevo aquí? ¿Puedo ayudarlo con algo?",
+            respuestas: [
+                { usuario: "nuevo", bot: "¡Bienvenido! Déjeme mostrarle. Tenemos equipos cardiovasculares en el primer piso y pesas en el segundo. ¿Cuáles son sus metas de condición física?" },
+                { usuario: "músculo", bot: "¡Genial! Para construir músculo, recomiendo enfocarse en ejercicios compuestos como sentadillas, peso muerto y press de banco. ¿Qué experiencia tiene con el entrenamiento con pesas?" },
+                { usuario: "principiante", bot: "¡Sin problema! Le mostraré la forma correcta. ¡Comencemos con las máquinas, que son más seguras para principiantes! ¡Sígame!" },
+                { usuario: "pesas", bot: "Las pesas están en el segundo piso, cerca del espejo. Van desde 5 hasta 50 libras. ¡Comience ligero y aumente gradualmente!" },
+                { usuario: "series", bot: "Para principiantes, recomiendo 3 series de 10-12 repeticiones. Descanse 60-90 segundos entre series. ¡Recuerde respirar correctamente!" }
+            ]
+        },
+        random: {
+            titulo: "Conversación Aleatoria",
+            emoji: "🎲",
+            descricao: "Conversación libre sobre varios temas del día a día.",
+            botName: "Compañero de Chat",
+            contexto: "Conversación casual sobre temas variados",
+            dicas: "Usa esta opción para practicar conversaciones generales. ¡Intenta hablar sobre tus pasatiempos, familia o planes para el fin de semana!",
+            frasesUteis: [
+                { frase: "¿Qué vas a hacer este fin de semana?", traducao: "O que você vai fazer neste fim de semana?" },
+                { frase: "Me encanta pasar tiempo con mi familia.", traducao: "Eu amo passar tempo com minha família." },
+                { frase: "¿Cuáles son tus pasatiempos?", traducao: "Quais são seus hobbies?" },
+                { frase: "¿Has viajado a algún lugar interesante?", traducao: "Você viajou para algum lugar interessante?" },
+                { frase: "Realmente me gusta aprender cosas nuevas.", traducao: "Eu realmente gosto de aprender coisas novas." }
+            ],
+            dialogoInicial: "¡Hola! ¡Qué bueno charlar contigo hoy. De qué te gustaría hablar? Podemos discutir cualquier cosa: tu día, pasatiempos, viajes, ¡cualquier cosa que te interese!",
+            respuestas: [
+                { usuario: "fin de semana", bot: "¡Genial! Espero que tengas planes divertidos. ¿Qué sueles hacer los fines de semana? ¿Prefieres quedarte en casa o salir?" },
+                { usuario: "familia", bot: "¡Eso es maravilloso! El tiempo en familia es muy importante. ¿Tienes hermanos? ¿Qué les gusta hacer juntos?" },
+                { usuario: "pasatiempos", bot: "¡Los pasatiempos son geniales para relajarse! ¿Cuáles son algunas cosas que te gusta hacer en tu tiempo libre? ¿Algún deporte, juego o actividad creativa?" },
+                { usuario: "viajar", bot: "¡Viajar es increíble! No hay nada como experimentar nuevas culturas. ¿Has estado en lugares interesantes? ¿O hay algún lugar donde siempre quisiste ir?" },
+                { usuario: "aprender", bot: "¡Me encanta esa actitud! Aprender cosas nuevas mantiene nuestra mente aguda. ¿Qué idiomas estás aprendiendo además de español? ¿Qué otras habilidades te gustaría desarrollar?" }
+            ]
+        }
+    }
+};
+
+// ==================== VARIÁVEIS GLOBAIS ====================
+let idiomaAtual = 'ingles';
+let cenarioAtual = 'restaurante';
+let reconhecimentoVoz = null;
+let sintetizadorVoz = null;
+let estaGravando = false;
+let ultimaMensagemBot = '';
+let traducaoAtiva = false;
+
+// ==================== INICIALIZAÇÃO ====================
+function initLanguageModule() {
+    LanguageDB.init();
+    carregarProgresso();
+    iniciarReconhecimentoVoz();
+    iniciarSintetizadorVoz();
+    iniciarCenario('restaurante');
+    atualizarEstatisticas();
+}
+
+// ==================== RECONHECIMENTO DE VOZ ====================
+function iniciarReconhecimentoVoz() {
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        reconhecimentoVoz = new SpeechRecognition();
+        
+        reconhecimentoVoz.lang = idiomaAtual === 'ingles' ? 'en-US' : 'es-ES';
+        reconhecimentoVoz.continuous = false;
+        reconhecimentoVoz.interimResults = false;
+        reconhecimentoVoz.maxAlternatives = 1;
+
+        reconhecimentoVoz.onstart = () => {
+            estaGravando = true;
+            document.getElementById('mic-btn').classList.add('recording');
+            document.getElementById('voice-status').textContent = idiomaAtual === 'ingles' ? '🎤 Listening...' : '🎤 Escuchando...';
+        };
+
+        reconhecimentoVoz.onend = () => {
+            estaGravando = false;
+            document.getElementById('mic-btn').classList.remove('recording');
+            document.getElementById('voice-status').textContent = idiomaAtual === 'ingles' ? '🎤 Click microphone to speak' : '🎤 Haga clic en el micrófono para hablar';
+        };
+
+        reconhecimentoVoz.onresult = (event) => {
+            const transcricao = event.results[0][0].transcript;
+            document.getElementById('input-idioma').value = transcricao;
+            processarRespostaUsuario(transcricao);
+        };
+
+        reconhecimentoVoz.onerror = (event) => {
+            console.error('Erro no reconhecimento de voz:', event.error);
+            estaGravando = false;
+            document.getElementById('mic-btn').classList.remove('recording');
+            document.getElementById('voice-status').textContent = idiomaAtual === 'ingles' 
+                ? '⚠️ Voice recognition error. Try again.' 
+                : '⚠️ Error de reconocimiento. Intente de nuevo.';
+        };
+    } else {
+        document.getElementById('voice-status').textContent = idiomaAtual === 'ingles' 
+            ? '⚠️ Voice recognition not supported in this browser' 
+            : '⚠️ Reconocimiento de voz no soportado en este navegador';
+    }
+}
+
+function toggleVoiceInput() {
+    if (!reconhecimentoVoz) {
+        alert(idiomaAtual === 'ingles' 
+            ? 'Voice recognition is not supported in your browser. Please use Chrome or Edge.' 
+            : 'El reconocimiento de voz no es compatible con su navegador. Use Chrome o Edge.');
+        return;
+    }
+    
+    if (estaGravando) {
+        reconhecimentoVoz.stop();
+    } else {
+        reconhecimentoVoz.lang = idiomaAtual === 'ingles' ? 'en-US' : 'es-ES';
+        reconhecimentoVoz.start();
+    }
+}
+
+// ==================== SÍNTESE DE VOZ ====================
+function iniciarSintetizadorVoz() {
+    if ('speechSynthesis' in window) {
+        sintetizadorVoz = window.speechSynthesis;
+    }
+}
+
+function falarTexto(texto) {
+    if (!sintetizadorVoz) return;
+    
+    sintetizadorVoz.cancel(); // Para qualquer fala anterior
+    
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = idiomaAtual === 'ingles' ? 'en-US' : 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    
+    sintetizadorVoz.speak(utterance);
+}
+
+function repetirUltimaMensagem() {
+    if (ultimaMensagemBot) {
+        falarTexto(ultimaMensagemBot);
+    }
+}
+
+// ==================== SELEÇÃO DE IDIOMA ====================
+function selecionarIdioma(idioma) {
+    idiomaAtual = idioma;
+    
+    // Atualizar UI
+    document.getElementById('lang-ingles').classList.toggle('active', idioma === 'ingles');
+    document.getElementById('lang-espanhol').classList.toggle('active', idioma === 'espanhol');
+    
+    // Reiniciar reconhecimento de voz com novo idioma
+    if (reconhecimentoVoz) {
+        reconhecimentoVoz.lang = idioma === 'ingles' ? 'en-US' : 'es-ES';
+    }
+    
+    // Reiniciar cenário atual
+    iniciarCenario(cenarioAtual);
+    
+    // Atualizar nome do bot
+    const cenario = cenarios[idioma][cenarioAtual];
+    document.getElementById('bot-name').textContent = cenario.botName;
+    
+    // Limpar chat
+    document.getElementById('chat-messages-idiomas').innerHTML = '';
+    adicionarMensagemBot(cenario.dialogoInicial);
+}
+
+// ==================== CENÁRIOS ====================
+function mudarCenario() {
+    cenarioAtual = document.getElementById('cenario-select').value;
+    iniciarCenario(cenarioAtual);
+}
+
+function iniciarCenario(cenario) {
+    const cenarioData = cenarios[idiomaAtual][cenario];
+    
+    if (!cenarioData) return;
+    
+    // Atualizar descrição
+    document.getElementById('cenario-desc').innerHTML = `
+        <p style="color: var(--gray);">${cenarioData.descricao}</p>
+    `;
+    
+    // Atualizar dicas
+    document.getElementById('cenario-dica').textContent = cenarioData.dicas;
+    
+    // Atualizar frases úteis
+    const frasesContainer = document.getElementById('frases-uteis');
+    frasesContainer.innerHTML = cenarioData.frasesUteis.map(f => `
+        <div style="background: var(--darker); padding: 15px; border-radius: 10px; border-left: 3px solid var(--primary);">
+            <div style="font-weight: 600; margin-bottom: 5px;">${f.frase}</div>
+            <div style="color: var(--gray); font-size: 0.9rem;">${f.traducao}</div>
+        </div>
+    `).join('');
+    
+    // Atualizar nome do bot
+    document.getElementById('bot-name').textContent = cenarioData.botName;
+    
+    // Limpar e reiniciar chat
+    const chatMessages = document.getElementById('chat-messages-idiomas');
+    chatMessages.innerHTML = '';
+    adicionarMensagemBot(cenarioData.dialogoInicial);
+}
+
+// ==================== CHAT ====================
+function adicionarMensagem(texto, tipo) {
+    const chatMessages = document.getElementById('chat-messages-idiomas');
+    const now = new Date();
+    const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${tipo}`;
+    
+    if (tipo === 'bot') {
+        messageDiv.innerHTML = `
+            <span class="message-avatar">🤖</span>
+            <span class="message-content">${texto}</span>
+            <span class="message-time">${time}</span>
+        `;
+    } else {
+        messageDiv.innerHTML = `
+            <span class="message-content">${texto}</span>
+            <span class="message-time">${time}</span>
+        `;
+    }
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function adicionarMensagemBot(texto) {
+    ultimaMensagemBot = texto;
+    adicionarMensagem(texto, 'bot');
+    falarTexto(texto);
+}
+
+function adicionarMensagemSystem(texto) {
+    const chatMessages = document.getElementById('chat-messages-idiomas');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message system';
+    messageDiv.innerHTML = texto;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function enviarMensagemIdioma() {
+    const input = document.getElementById('input-idioma');
+    const resposta = input.value.trim();
+    
+    if (!resposta) return;
+    
+    adicionarMensagem(resposta, 'user');
+    input.value = '';
+    
+    processarRespostaUsuario(resposta);
+}
+
+function processarRespostaUsuario(resposta) {
+    const cenarioData = cenarios[idiomaAtual][cenarioAtual];
+    const respostaLower = resposta.toLowerCase();
+    
+    // Adicionar XP pela participação
+    LanguageDB.adicionarXP(5);
+    
+    // Encontrar resposta correspondente
+    let respostaBot = null;
+    for (let r of cenarioData.respostas) {
+        if (respostaLower.includes(r.usuario)) {
+            respostaBot = r.bot;
+            break;
+        }
+    }
+    
+    // Se não encontrar resposta específica, usar resposta genérica
+    if (!respostaBot) {
+        const respostasGenericas = {
+            ingles: [
+                "That's interesting! Tell me more about that.",
+                "I see! What else would you like to talk about?",
+                "Great point! Do you have any other questions?",
+                "I understand! Is there anything else I can help you with?"
+            ],
+            espanol: [
+                "¡Eso es interesante! Cuéntame más sobre eso.",
+                "¡Entiendo! ¿Qué más te gustaría hablar?",
+                "¡Gran punto! ¿Tienes alguna otra pregunta?",
+                "¡Entiendo! ¿Hay algo más en lo que pueda ayudarte?"
+            ]
+        };
+        
+        const randomIndex = Math.floor(Math.random() * respostasGenericas[idiomaAtual].length);
+        respostaBot = respostasGenericas[idiomaAtual][randomIndex];
+    }
+    
+    // Simular delay para parecer mais natural
+    setTimeout(() => {
+        adicionarMensagemSystem(idiomaAtual === 'ingles' 
+            ? '✨ Analyzing your response...' 
+            : '✨ Analizando tu respuesta...');
+        
+        setTimeout(() => {
+            // Avaliar pronúncia (simulado)
+            avaliarResposta(resposta);
+            
+            setTimeout(() => {
+                adicionarMensagemBot(respostaBot);
+                LanguageDB.adicionarXP(10);
+                atualizarEstatisticas();
+            }, 1000);
+        }, 1500);
+    }, 500);
+}
+
+// ==================== AVALIAÇÃO DE PRONÚNCIA ====================
+function avaliarResposta(resposta) {
+    // Simular análise de pronúncia
+    const palavras = resposta.split(' ');
+    const totalPalavras = palavras.length;
+    const palavrasCorretas = Math.floor(totalPalavras * (0.7 + Math.random() * 0.3)); // 70-100%
+    
+    // Calcular pontuação
+    const precisao = Math.round((palavrasCorretas / totalPalavras) * 100);
+    
+    // Mostrar feedback
+    mostrarFeedbackPronuncia(precisao, resposta);
+    
+    // Registrar progresso
+    LanguageDB.registrarConversa(palavrasCorretas, totalPalavras);
+    LanguageDB.adicionarXP(precisao > 80 ? 20 : 10);
+    
+    atualizarProgresso();
+    atualizarEstatisticas();
+}
+
+function mostrarFeedbackPronuncia(precisao, resposta) {
+    const feedbackDiv = document.getElementById('pronunciation-feedback');
+    const scoreSpan = document.getElementById('pronunciation-score');
+    const detailsDiv = document.getElementById('pronunciation-details');
+    
+    // Configurar pontuação
+    scoreSpan.textContent = `${precisao}%`;
+    scoreSpan.className = 'pronunciation-score';
+    
+    if (precisao >= 90) {
+        scoreSpan.classList.add('excellent');
+    } else if (precisao >= 75) {
+        scoreSpan.classList.add('good');
+    } else if (precisao >= 60) {
+        scoreSpan.classList.add('needs-work');
+    } else {
+        scoreSpan.classList.add('poor');
+    }
+    
+    // Gerar detalhes
+    const palavras = resposta.split(' ');
+    let detailsHTML = '';
+    
+    palavras.slice(0, 5).forEach((palavra, index) => {
+        const correto = Math.random() > 0.3;
+        detailsHTML += `
+            <div class="pronunciation-item ${correto ? 'correct' : 'incorrect'}">
+                <span class="word">${palavra}</span>
+                <span class="phonetic">/${Math.random().toString(36).substring(7)}/</span>
+                <span class="feedback">${correto ? '✓ Pronúncia correta' : '⚠️ Foque nesta palavra'}</span>
+                ${!correto ? `<span class="suggestion">Dica: Pratique saying "${palavra}" lentamente</span>` : ''}
+            </div>
+        `;
+    });
+    
+    detailsDiv.innerHTML = detailsHTML;
+    feedbackDiv.classList.add('show');
+    
+    // Adicionar XP pelo feedback
+    LanguageDB.adicionarXP(15);
+}
+
+// ==================== PROGRESSO ====================
+function carregarProgresso() {
+    const progresso = LanguageDB.carregar('progresso') || { xp: 0, nivel: 'iniciante' };
+    atualizarInterfaceProgresso(progresso);
+}
+
+function atualizarProgresso() {
+    const progresso = LanguageDB.carregar('progresso') || { xp: 0, nivel: 'iniciante' };
+    atualizarInterfaceProgresso(progresso);
+}
+
+function atualizarInterfaceProgresso(progresso) {
+    // Atualizar estágios
+    const stages = ['iniciante', 'basico', 'intermediario', 'avancado'];
+    const currentIndex = stages.indexOf(progresso.nivel);
+    
+    stages.forEach((stage, index) => {
+        const stageEl = document.getElementById(`stage-${stage}`);
+        if (stageEl) {
+            stageEl.classList.remove('active', 'completed');
+            if (index < currentIndex) {
+                stageEl.classList.add('completed');
+            } else if (index === currentIndex) {
+                stageEl.classList.add('active');
+            }
+        }
+    });
+    
+    // Atualizar nome do estágio atual
+    const nomesEstagios = {
+        iniciante: 'Iniciante',
+        basico: 'Básico',
+        intermediario: 'Intermediário',
+        avancado: 'Avançado'
+    };
+    document.getElementById('current-stage-name').textContent = nomesEstagios[progresso.nivel] || 'Iniciante';
+    
+    // Calcular progresso para o próximo nível
+    const limitesXP = { iniciante: 100, basico: 300, intermediario: 500, avancado: 1000 };
+    const limiteAtual = limitesXP[progresso.nivel] || 100;
+    const limiteProximo = limitesXP[stages[Math.min(stages.indexOf(progresso.nivel) + 1, 3)]] || 1000;
+    const progressoPercentual = Math.min(100, ((progresso.xp - limiteAtual) / (limiteProximo - limiteAtual)) * 100);
+    
+    document.getElementById('stage-progress-bar').style.width = `${progressoPercentual}%`;
+    document.getElementById('stage-progress-text').textContent = `${progresso.xp} / ${limiteProximo} XP`;
+    document.getElementById('xp-points').textContent = `${progresso.xp} XP`;
+}
+
+function atualizarEstatisticas() {
+    const progresso = LanguageDB.carregar('progresso') || { conversas: 0, palavrasCertas: 0, tentativas: 0 };
+    
+    document.getElementById('total-conversas').textContent = progresso.conversas;
+    document.getElementById('palavras-certas').textContent = progresso.palavrasCertas;
+    
+    const mediaPrecisao = progresso.tentativas > 0 
+        ? Math.round((progresso.palavrasCertas / progresso.tentativas) * 100) 
+        : 0;
+    document.getElementById('media-precisao').textContent = `${mediaPrecisao}%`;
+}
+
+// ==================== TRADUÇÃO ====================
+function traduzirConversa() {
+    traducaoAtiva = !traducaoAtiva;
+    
+    const messages = document.querySelectorAll('#chat-messages-idiomas .message');
+    
+    messages.forEach(msg => {
+        if (traducaoAtiva) {
+            // Adicionar tradução (simulado)
+            if (!msg.querySelector('.translation')) {
+                const traducao = document.createElement('div');
+                traducao.className = 'translation';
+                traducao.style.cssText = 'margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--gray); font-size: 0.85rem; color: var(--accent-blue);';
+                traducao.textContent = '🇧🇷 ' + (msg.classList.contains('user') 
+                    ? 'Tradução simulada da sua mensagem'
+                    : 'Tradução simulada da mensagem do bot');
+                msg.appendChild(traducao);
+            }
+        } else {
+            const translation = msg.querySelector('.translation');
+            if (translation) {
+                translation.remove();
+            }
+        }
+    });
+    
+    document.getElementById('voice-status').textContent = traducaoAtiva 
+        ? (idiomaAtual === 'ingles' ? '🌐 Translations shown' : '🌐 Traducciones mostradas')
+        : (idiomaAtual === 'ingles' ? '🎤 Click microphone to speak' : '🎤 Haga clic en el micrófono para hablar');
+}
+
+// ==================== INICIALIZAR QUANDO A PÁGINA CARREGAR ====================
+document.addEventListener('DOMContentLoaded', function() {
+    // Aguardar um pouco para garantir que todos os elementos estejam carregados
+    setTimeout(initLanguageModule, 100);
+});
+</script><!-- ==================== PRÁTICA DE IDIOMAS PAGE ==================== -->
+<section class="page-section" id="page-idiomas">
+    <!-- conteúdo antigo -->
+</section>
