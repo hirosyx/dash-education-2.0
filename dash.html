@@ -2570,7 +2570,7 @@ const cenarios = {
         cinema: {
             titulo: "No Cinema",
             emoji: "🎬",
-            descricao: "Você está no cinema想买 pipoca e ver um filme.",
+            descricao: "Você está no cinema e quer comprar pipoca e ver um filme.",
             botName: "Ticket Clerk",
             contexto: "O funcionário do cinema está pronto para ajudar",
             dicas: "Para comprar ingresso, diga 'I'd like two tickets for...'. Para pipoca, pergunte 'What sizes of popcorn do you have?'",
@@ -3162,7 +3162,7 @@ function processarRespostaUsuario(resposta) {
                 "Great point! Do you have any other questions?",
                 "I understand! Is there anything else I can help you with?"
             ],
-            espanol: [
+            espanhol: [
                 "¡Eso es interesante! Cuéntame más sobre eso.",
                 "¡Entiendo! ¿Qué más te gustaría hablar?",
                 "¡Gran punto! ¿Tienes alguna otra pregunta?",
@@ -3196,11 +3196,15 @@ function processarRespostaUsuario(resposta) {
 // ==================== AVALIAÇÃO DE PRONÚNCIA ====================
 function avaliarResposta(resposta) {
     // Simular análise de pronúncia
-    const palavras = resposta.split(' ');
+    const palavras = resposta.split(' ').filter(p => p.length > 0);
     const totalPalavras = palavras.length;
-    const palavrasCorretas = Math.floor(totalPalavras * (0.7 + Math.random() * 0.3)); // 70-100%
+
+    if (totalPalavras === 0) {
+        mostrarFeedbackPronuncia(0, "");
+        return;
+    }
     
-    // Calcular pontuação
+    const palavrasCorretas = Math.floor(totalPalavras * (0.7 + Math.random() * 0.3)); // 70-100%
     const precisao = Math.round((palavrasCorretas / totalPalavras) * 100);
     
     // Mostrar feedback
@@ -3234,7 +3238,7 @@ function mostrarFeedbackPronuncia(precisao, resposta) {
     }
     
     // Gerar detalhes
-    const palavras = resposta.split(' ');
+    const palavras = resposta.split(' ').filter(p => p.length > 0);
     let detailsHTML = '';
     
     palavras.slice(0, 5).forEach((palavra, index) => {
