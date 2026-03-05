@@ -1,1 +1,334 @@
-# dash-education /c/Users/GABRIELHIROMITSUHASE/Desktop/dash/dash.html /c/Users/GABRIELHIROMITSUHASE/Desktop/dash/dash.idioma.html /c/Users/GABRIELHIROMITSUHASE/Desktop/dash/dashidiomas.html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Dash Education</title>
+    <style>
+        :root {
+            --primary: #DC2626;
+            --secondary: #1F2937;
+            --darker: #0A0A0A;
+            --white: #FFFFFF;
+            --gray: #9CA3AF;
+            --gray-light: #374151;
+            --gradient-primary: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--darker);
+            color: var(--white);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .login-container {
+            background: var(--secondary);
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--gray-light);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+        }
+
+        .logo-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+
+        .form-group { margin-bottom: 20px; }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--darker);
+            border: 2px solid var(--gray-light);
+            border-radius: 10px;
+            color: var(--white);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover { transform: translateY(-2px); }
+
+        .toggle-text {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .toggle-text a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(220, 38, 38, 0.2) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        /* ==================== DYNAMIC LOADING SCREEN ==================== */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--darker);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            opacity: 1;
+            visibility: visible;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated background lines */
+        .loader-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(
+                -45deg,
+                transparent,
+                transparent 25px,
+                rgba(220, 38, 38, 0.08) 25px,
+                rgba(220, 38, 38, 0.08) 50px
+            );
+            background-size: 200% 200%;
+            animation: slide-lines 10s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes slide-lines {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+
+        .loader-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loader-content {
+            text-align: center;
+            position: relative;
+            z-index: 2; /* Above the lines */
+            animation: breath-zoom-loader 2.5s infinite ease-in-out;
+            /* Exit animation */
+            transition: transform 0.4s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.3s ease;
+        }
+
+        /* When hiding, the content zooms up and fades */
+        .loader-overlay.hidden .loader-content {
+            transform: scale(3);
+            opacity: 0;
+        }
+
+        /* Replaces the old pulse-loader */
+        @keyframes breath-zoom-loader {
+            0% { transform: scale(0.98); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(0.98); }
+        }
+
+        .loader-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-primary);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
+        }
+        .loader-logo svg { width: 45px; height: 45px; color: white; }
+        .loader-title { font-size: 2rem; font-weight: 700; color: var(--white); letter-spacing: -0.5px; }
+    </style>
+</head>
+<body>
+    <div class="loader-overlay" id="loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: white;">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+            </div>
+            <h1 class="loader-title">Dash Education</h1>
+        </div>
+    </div>
+    <div class="bg-circle" style="width: 600px; height: 600px; top: -200px; left: -200px;"></div>
+    <div class="bg-circle" style="width: 500px; height: 500px; bottom: -100px; right: -100px; background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);"></div>
+
+    <div class="login-container">
+        <div class="logo">
+            <div class="logo-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: white;">
+                    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                    <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                </svg>
+            </div>
+            <div class="logo-title">Dash Education</div>
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>E-mail</label>
+                <input type="email" id="email" class="form-control" placeholder="seu@email.com" required>
+            </div>
+            <div class="form-group">
+                <label>Senha</label>
+                <input type="password" id="password" class="form-control" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn" id="submitBtn">Entrar</button>
+        </form>
+
+        <div class="toggle-text">
+            <span id="toggleMsg">Não tem uma conta?</span>
+            <a onclick="toggleMode()" id="toggleBtn">Criar conta</a>
+        </div>
+    </div>
+
+    <script>
+        let isLoginMode = true;
+
+        // Verifica se já está logado
+        if (localStorage.getItem('dash_isLoggedIn') === 'true') {
+            window.location.href = 'dash.html';
+        }
+
+        function toggleMode() {
+            isLoginMode = !isLoginMode;
+            const title = document.getElementById('submitBtn');
+            const toggleMsg = document.getElementById('toggleMsg');
+            const toggleBtn = document.getElementById('toggleBtn');
+
+            if (isLoginMode) {
+                title.textContent = 'Entrar';
+                toggleMsg.textContent = 'Não tem uma conta?';
+                toggleBtn.textContent = 'Criar conta';
+            } else {
+                title.textContent = 'Criar Conta';
+                toggleMsg.textContent = 'Já tem uma conta?';
+                toggleBtn.textContent = 'Fazer login';
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            if (isLoginMode) {
+                // Lógica de Login
+                const storedEmail = localStorage.getItem('dash_userEmail');
+                const storedPass = localStorage.getItem('dash_userPassword');
+
+                if (storedEmail === email && storedPass === password) {
+                    localStorage.setItem('dash_isLoggedIn', 'true');
+                    window.location.href = 'dash.html';
+                } else {
+                    alert('E-mail ou senha incorretos! Se não tem conta, clique em Criar conta.');
+                }
+            } else {
+                // Lógica de Cadastro
+                if (localStorage.getItem('dash_userEmail') && localStorage.getItem('dash_userEmail') !== email) {
+                    if(!confirm('Já existe uma conta salva neste navegador. Deseja substituí-la?')) {
+                        return;
+                    }
+                }
+                
+                localStorage.setItem('dash_userEmail', email);
+                localStorage.setItem('dash_userPassword', password);
+                localStorage.setItem('dash_isLoggedIn', 'true');
+                
+                // Define nome padrão se não existir
+                if (!localStorage.getItem('dash_userName')) {
+                    localStorage.setItem('dash_userName', email.split('@')[0]);
+                }
+                
+                alert('Conta criada com sucesso!');
+                window.location.href = 'dash.html';
+            }
+        }
+
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                // Adiciona um pequeno atraso para um efeito visual mais suave
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                }, 500); // 500ms de atraso
+            }
+        });
+    </script>
+</body>
+</html>
