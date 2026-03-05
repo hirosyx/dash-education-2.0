@@ -3,6 +3,11 @@
     <html lang="pt-BR">
     <head>
         <meta charset="UTF-8">
+        <script>
+            if (localStorage.getItem('dash_isLoggedIn') !== 'true') {
+                window.location.href = 'login.html';
+            }
+        </script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>🎓 Dash Education - Sistema Escolar Inteligente</title>
         <style>
@@ -784,10 +789,12 @@
             }
     
             .message.bot {
-                background: var(--secondary);
-                border: 1px solid var(--gray-light);
+                background: linear-gradient(135deg, var(--secondary) 0%, #2d3748 100%);
+                border: 1px solid rgba(255,255,255,0.05);
+                border-left: 4px solid var(--primary);
                 margin-right: auto;
                 border-bottom-left-radius: 4px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             }
     
             .message-time {
@@ -984,6 +991,54 @@
                 color: white;
             }
     
+            /* ==================== LOADING SCREEN ==================== */
+            .loader-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: var(--darker);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+                transition: opacity 0.5s ease, visibility 0.5s ease;
+                opacity: 1;
+                visibility: visible;
+            }
+
+            .loader-overlay.hidden {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
+
+            .loader-content {
+                text-align: center;
+                animation: pulse-loader 1.8s infinite ease-in-out;
+            }
+
+            @keyframes pulse-loader {
+                0%, 100% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+            }
+
+            .loader-logo {
+                width: 80px;
+                height: 80px;
+                background: var(--gradient-primary);
+                border-radius: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 20px auto;
+                box-shadow: 0 10px 30px rgba(220, 38, 38, 0.3);
+            }
+
+            .loader-logo svg { width: 45px; height: 45px; color: white; }
+            .loader-title { font-size: 2rem; font-weight: 700; color: var(--white); letter-spacing: -0.5px; }
+
             /* ==================== LOADING SPINNER ==================== */
             .spinner {
                 width: 40px;
@@ -1447,6 +1502,19 @@
         </style>
     </head>
     <body>
+        <!-- ==================== LOADING SCREEN ==================== -->
+        <div class="loader-overlay" id="loader">
+            <div class="loader-content">
+                <div class="loader-logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                    </svg>
+                </div>
+                <h1 class="loader-title">Dash Education</h1>
+            </div>
+        </div>
+
         <div class="app-container">
             <!-- ==================== SIDEBAR ==================== -->
             <aside class="sidebar" id="sidebar">
@@ -2083,70 +2151,38 @@
 <!-- Substitua toda a seção page-idiomas por este código: -->
 
 <section class="page-section" id="page-idiomas">
-    <!-- Header do Módulo -->
-    <div class="language-header">
-        <h1>
-            <span style="font-size: 2.5rem;">🌎</span>
-            Prática de Idiomas com IA
-        </h1>
-        <p>Pratique inglês e espanhol com nosso assistente virtual. Aprenda através de conversas reais, receba feedback de pronúncia e acompanhe seu progresso!</p>
-        
-        <!-- Seletor de Idioma -->
-        <div class="language-selector" style="margin-top: 25px;">
-            <div class="language-option active" id="lang-ingles" onclick="selecionarIdioma('ingles')">
-                <div class="flag">🇺🇸</div>
-                <h3>Inglês</h3>
-                <p>English Practice</p>
+    <!-- Header Simplificado com Nível 1-20 -->
+    <div class="card" style="margin-bottom: 25px; background: linear-gradient(to right, var(--secondary), var(--darker)); border: 1px solid var(--gray-light);">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+            
+            <!-- Seletor de Idioma -->
+            <div style="display: flex; gap: 10px;">
+                <button id="lang-ingles" onclick="selecionarIdioma('ingles')" class="btn btn-primary" style="padding: 10px 20px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.2rem;">🇺🇸</span> Inglês
+                </button>
+                <button id="lang-espanhol" onclick="selecionarIdioma('espanhol')" class="btn btn-secondary" style="padding: 10px 20px; display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 1.2rem;">🇪🇸</span> Espanhol
+                </button>
             </div>
-            <div class="language-option" id="lang-espanhol" onclick="selecionarIdioma('espanhol')">
-                <div class="flag">🇪🇸</div>
-                <h3>Espanhol</h3>
-                <p>Práctica de Español</p>
-            </div>
-        </div>
-    </div>
 
-    <!-- Sistema de Estágios -->
-    <div class="stages-container">
-        <div class="stages-header">
-            <h2>📊 Seu Progresso</h2>
-            <div id="xp-display" style="display: flex; align-items: center; gap: 10px;">
-                <span style="color: var(--warning);">⭐</span>
-                <span id="xp-points" style="font-weight: 600; color: var(--warning);">0 XP</span>
-            </div>
-        </div>
-        
-        <div class="stages-progress">
-            <div class="stage active" id="stage-iniciante">
-                <div class="stage-icon">🌱</div>
-                <div class="stage-label">Iniciante</div>
-                <div class="stage-desc">Básico do idioma</div>
-            </div>
-            <div class="stage" id="stage-basico">
-                <div class="stage-icon">📖</div>
-                <div class="stage-label">Básico</div>
-                <div class="stage-desc">Conversas simples</div>
-            </div>
-            <div class="stage" id="stage-intermediario">
-                <div class="stage-icon">💬</div>
-                <div class="stage-label">Intermediário</div>
-                <div class="stage-desc">Diálogos naturais</div>
-            </div>
-            <div class="stage" id="stage-avancado">
-                <div class="stage-icon">🎯</div>
-                <div class="stage-label">Avançado</div>
-                <div class="stage-desc">Fluência total</div>
-            </div>
-        </div>
-        
-        <!-- Barra de Progresso do Estágio Atual -->
-        <div style="margin-top: 25px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                <span id="current-stage-name" style="font-weight: 600;">Iniciante</span>
-                <span id="stage-progress-text">0 / 100 XP</span>
-            </div>
-            <div class="progress-bar" style="height: 12px; background: var(--gray-light); border-radius: 6px;">
-                <div id="stage-progress-bar" class="progress-fill red" style="width: 0%; border-radius: 6px; transition: width 0.5s ease;"></div>
+            <!-- Display de Nível e XP -->
+            <div style="display: flex; align-items: center; gap: 30px; flex: 1; justify-content: flex-end;">
+                <div style="text-align: right;">
+                    <div style="font-size: 0.8rem; color: var(--gray); text-transform: uppercase; letter-spacing: 1px;">Nível</div>
+                    <div style="font-size: 2rem; font-weight: 800; color: var(--white); line-height: 1;">
+                        <span id="user-level">1</span><span style="font-size: 1rem; color: var(--gray); font-weight: 400;">/20</span>
+                    </div>
+                </div>
+                
+                <div style="width: 200px;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
+                        <span style="color: var(--warning); font-weight: 600;" id="xp-points">0 XP</span>
+                        <span style="color: var(--gray);" id="xp-next-level">Próx: 100 XP</span>
+                    </div>
+                    <div class="progress-bar" style="height: 8px; background: rgba(255,255,255,0.1);">
+                        <div id="level-progress-bar" class="progress-fill orange" style="width: 0%;"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -2201,42 +2237,51 @@
             </div>
 
             <!-- Controles de Áudio e Voz -->
-            <div class="voice-controls">
-                <button class="voice-btn listen" id="mic-btn" onclick="toggleVoiceInput()" title="Clique para falar">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                        <line x1="12" y1="19" x2="12" y2="23"/>
-                        <line x1="8" y1="23" x2="16" y2="23"/>
-                    </svg>
-                </button>
-                
-                <button class="voice-btn secondary" onclick="repetirUltimaMensagem()" title="Repetir mensagem">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="5 4 15 12 5 20 5 4"/>
-                        <line x1="19" y1="5" x2="19" y2="19"/>
-                    </svg>
-                </button>
-                
-                <button class="voice-btn secondary" onclick="traduzirConversa()" title="Traduzir conversa">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="2" y1="12" x2="22" y2="12"/>
-                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10"/>
-                    </svg>
-                </button>
-
-                <div class="voice-input">
-                    <input type="text" id="input-idioma" placeholder="Ou digite sua resposta aqui..." onkeypress="if(event.key==='Enter')enviarMensagemIdioma()">
+            <div class="voice-controls" style="flex-direction: column; gap: 20px;">
+                <div id="speech-prompt-container" style="
+                    width: 100%; 
+                    text-align: center; 
+                    padding: 30px 25px; 
+                    background: linear-gradient(145deg, var(--secondary-light), var(--secondary)); 
+                    border-radius: 20px; 
+                    border: 1px solid var(--gray-light);
+                    position: relative;
+                    overflow: hidden;
+                    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+                ">
+                    <div style="position: absolute; top: -20px; left: 10px; font-size: 150px; font-family: 'Georgia', serif; color: var(--primary); opacity: 0.1; transform: rotate(-15deg); z-index: 0;">“</div>
+                    <div style="position: relative; z-index: 1;">
+                        <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Sua vez de falar</p>
+                        <h3 id="speech-target" style="color: var(--white); font-weight: 700; font-size: 1.8rem; margin-bottom: 10px; line-height: 1.3;">...</h3>
+                        <p id="speech-translation" style="color: var(--primary-light); font-size: 1rem; font-style: italic;">...</p>
+                    </div>
                 </div>
 
-                <button class="send-btn" onclick="enviarMensagemIdioma()">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="22" y1="2" x2="11" y2="13"/>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                    </svg>
-                    Enviar
-                </button>
+                <div style="display: flex; gap: 20px; justify-content: center; align-items: center; width: 100%;">
+                    <button class="voice-btn secondary" onclick="repetirUltimaMensagem()" title="Repetir mensagem do Bot">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="5 4 15 12 5 20 5 4"/>
+                            <line x1="19" y1="5" x2="19" y2="19"/>
+                        </svg>
+                    </button>
+
+                    <button class="voice-btn listen" id="mic-btn" onclick="toggleVoiceInput()" title="Clique para falar" style="width: 80px; height: 80px; background: var(--primary); border: 4px solid rgba(255,255,255,0.1);">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+                            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                            <line x1="8" y1="23" x2="16" y2="23"/>
+                        </svg>
+                    </button>
+                    
+                    <button class="voice-btn secondary" onclick="pularFrase()" title="Nova Frase">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+                            <path d="M21 3v5h-5"/>
+                        </svg>
+                    </button>
+                </div>
+                <div id="voice-status" style="color: var(--gray); font-size: 0.9rem; text-align: center;">🎤 Clique no microfone para falar</div>
             </div>
         </div>
 
@@ -2315,7 +2360,7 @@ const LanguageDB = {
         if (!localStorage.getItem('languageDB_inicializado')) {
             this.salvar('progresso', {
                 xp: 0,
-                nivel: 'iniciante',
+                nivel: 1,
                 conversas: 0,
                 palavrasCertas: 0,
                 tentativas: 0,
@@ -2335,21 +2380,22 @@ const LanguageDB = {
     },
 
     adicionarXP(pontos) {
-        const progresso = this.carregar('progresso') || { xp: 0, nivel: 'iniciante', conversas: 0, palavrasCertas: 0, tentativas: 0, historico: [] };
+        const progresso = this.carregar('progresso') || { xp: 0, nivel: 1, conversas: 0, palavrasCertas: 0, tentativas: 0, historico: [] };
         progresso.xp += pontos;
         progresso.tentativas += 1;
         
-        // Atualizar nível
-        if (progresso.xp >= 500) progresso.nivel = 'avancado';
-        else if (progresso.xp >= 300) progresso.nivel = 'intermediario';
-        else if (progresso.xp >= 100) progresso.nivel = 'basico';
+        // Atualizar nível (1 a 20, cada 100 XP sobe um nível)
+        let novoNivel = Math.floor(progresso.xp / 100) + 1;
+        if (novoNivel > 20) novoNivel = 20;
+        
+        progresso.nivel = novoNivel;
         
         this.salvar('progresso', progresso);
         return progresso;
     },
 
     registrarConversa(palavrasCertas, totalPalavras) {
-        const progresso = this.carregar('progresso') || { xp: 0, nivel: 'iniciante', conversas: 0, palavrasCertas: 0, tentativas: 0, historico: [] };
+        const progresso = this.carregar('progresso') || { xp: 0, nivel: 1, conversas: 0, palavrasCertas: 0, tentativas: 0, historico: [] };
         progresso.conversas += 1;
         progresso.palavrasCertas += palavrasCertas;
         this.salvar('progresso', progresso);
@@ -2374,7 +2420,7 @@ const cenarios = {
                 { frase: "Can I have some water?", traducao: "Posso ter um pouco de água?" },
                 { frase: "The check, please.", traducao: "A conta, por favor." }
             ],
-            dialogoInicial: "Good evening! Welcome to our restaurant. Are you ready to order, or would you like a few more minutes?",
+            dialogoInicial: "Good evening! I've saved you a great table. Are you ready to order, or would you like to start with some drinks?",
             respostas: [
                 { usuario: "menu", bot: "Here is our menu. We have a variety of dishes including pasta, steak, fish, and salads. Our special today is the grilled salmon. What would you like?" },
                 { usuario: "recommend", bot: "I recommend our famous pasta carbonara or the grilled salmon. Both are excellent choices! Which one sounds good to you?" },
@@ -2397,7 +2443,7 @@ const cenarios = {
                 { frase: "How much is that?", traducao: "Quanto custa isso?" },
                 { frase: "Can I have a receipt?", traducao: "Posso ter um recibo?" }
             ],
-            dialogoInicial: "Hi there! Welcome to Coffee House. What can I get for you today?",
+            dialogoInicial: "Hi there! It smells like fresh coffee in here. What can I craft for you today?",
             respostas: [
                 { usuario: "latte", bot: "Sure! Would you like a small, medium, or large? We also have oat, almond, and soy milk options." },
                 { usuario: "medium", bot: "Great! A medium latte. Anything else for you? We have fresh pastries and muffins too." },
@@ -2420,7 +2466,7 @@ const cenarios = {
                 { frase: "Do you have this in a different size?", traducao: "Vocês têm isso em um tamanho diferente?" },
                 { frase: "How much does it cost?", traducao: "Quanto custa?" }
             ],
-            dialogoInicial: "Hello! Welcome to Fashion Store. Can I help you find something today?",
+            dialogoInicial: "Hello! We just got some new arrivals I think you'll love. Can I help you find a specific style?",
             respostas: [
                 { usuario: "shirt", bot: "Of course! We have a great selection of shirts. What color are you looking for? We have blue, white, pink, and black." },
                 { usuario: "blue", bot: "Great choice! This blue shirt is very popular. Would you like to try it on? The fitting rooms are over there." },
@@ -2443,7 +2489,7 @@ const cenarios = {
                 { frase: "Can I have a window seat?", traducao: "Posso ter uma janela?" },
                 { frase: "Is my flight on time?", traducao: "Meu voo está no horário?" }
             ],
-            dialogoInicial: "Good morning! Welcome to the airport. Are you here to check in for your flight?",
+            dialogoInicial: "Good morning! Flying somewhere exciting today? Are you checking in for your flight?",
             respostas: [
                 { usuario: "yes", bot: "Great! Can I see your passport and booking confirmation, please? What destination are you flying to today?" },
                 { usuario: "new york", bot: "Perfect! Flight 456 to New York. You're checked in. Would you like a window or aisle seat?" },
@@ -2466,7 +2512,7 @@ const cenarios = {
                 { frase: "Can I have a wake-up call?", traducao: "Posso ter um despertador?" },
                 { frase: "I'd like to check out, please.", traducao: "Eu gostaria de fazer check-out, por favor." }
             ],
-            dialogoInicial: "Welcome to Grand Hotel! Do you have a reservation with us?",
+            dialogoInicial: "Welcome to Grand Hotel! We're delighted to have you. Do you have a reservation with us?",
             respostas: [
                 { usuario: "yes", bot: "Perfect! What name is the reservation under? I'll look it up for you." },
                 { usuario: "johnson", bot: "Here it is! Mr. Johnson, you have a reservation for 3 nights. What type of room would you like - king or queen bed?" },
@@ -2489,7 +2535,7 @@ const cenarios = {
                 { frase: "I need to see a doctor.", traducao: "Eu preciso ver um médico." },
                 { frase: "I'm allergic to...", traducao: "Eu sou alérgico a..." }
             ],
-            dialogoInicial: "Hello! I'm Nurse Sarah. How can I help you today? Are you feeling okay?",
+            dialogoInicial: "Hello. I'm Nurse Sarah. I'm here to take care of you. Can you tell me exactly how you're feeling?",
             respostas: [
                 { usuario: "headache", bot: "I'm sorry to hear that. How long have you had the headache? Is it a sharp pain or a dull ache? Any other symptoms?" },
                 { usuario: "since morning", bot: "I see. Let me check your temperature. Please open your mouth and say 'ahhh'. Your temperature is normal, that's good." },
@@ -2512,7 +2558,7 @@ const cenarios = {
                 { frase: "Can I go to the bathroom?", traducao: "Posso ir ao banheiro?" },
                 { frase: "I need help with this exercise.", traducao: "Eu preciso de ajuda com este exercício." }
             ],
-            dialogoInicial: "Good morning, class! Today we'll be learning about photosynthesis. Does anyone have any questions before we begin?",
+            dialogoInicial: "Good morning, class! Today's topic is fascinating. Before we dive in, does anyone have questions about the homework?",
             respostas: [
                 { usuario: "question", bot: "Of course! What's your question? I'm here to help you understand the material." },
                 { usuario: "homework", bot: "The homework is to read chapter 5 and answer questions 1 through 5. It's due next Monday. Do you have any specific questions about it?" },
@@ -2535,7 +2581,7 @@ const cenarios = {
                 { frase: "Do you come here often?", traducao: "Você vem aqui frequentemente?" },
                 { frase: "Would you like something to drink?", traducao: "Você gostaria de algo para beber?" }
             ],
-            dialogoInicial: "Hi there! I don't think we've met. I'm Alex. What's your name?",
+            dialogoInicial: "Hey! The music is great, isn't it? I'm Alex. I don't think we've met before, what's your name?",
             respostas: [
                 { usuario: "name", bot: "Nice to meet you, [name]! Are you a friend of the host, or did you just move to the neighborhood?" },
                 { usuario: "friend", bot: "That's great! How long have you known Sarah? She's an amazing person, isn't she?" },
@@ -2558,7 +2604,7 @@ const cenarios = {
                 { frase: "I'll pay by credit card.", traducao: "Vou pagar com cartão de crédito." },
                 { frase: "Can I have a bag, please?", traducao: "Posso ter um saco, por favor?" }
             ],
-            dialogoInicial: "Hello! Welcome to Fresh Market. Can I help you find anything today?",
+            dialogoInicial: "Hi! Welcome to Fresh Market. We have some great deals on fruit today. Can I help you find anything?",
             respostas: [
                 { usuario: "milk", bot: "Sure! The milk is in the dairy section, which is down this aisle on your left. We have whole, skim, and almond milk." },
                 { usuario: "almond", bot: "Great choice! Our almond milk is on sale this week. It's in the same aisle, about halfway down on the right side." },
@@ -2581,7 +2627,7 @@ const cenarios = {
                 { frase: "Can I have a large popcorn?", traducao: "Posso ter uma pipoca grande?" },
                 { frase: "Where is screen 3?", traducao: "Onde é a sala 3?" }
             ],
-            dialogoInicial: "Welcome to City Cinema! What can I help you with today? Tickets, snacks, or both?",
+            dialogoInicial: "Welcome to City Cinema! The popcorn is fresh and hot. Are you here for tickets or snacks?",
             respostas: [
                 { usuario: "tickets", bot: "Great! What movie would you like to see? We have action, comedy, drama, and horror films playing today." },
                 { usuario: "action", bot: "Perfect! 'Super Hero 4' is showing at 2:00, 5:00, and 8:00 PM. Would you like tickets for one of those showings?" },
@@ -2604,7 +2650,7 @@ const cenarios = {
                 { frase: "Where are the dumbbells?", traducao: "Onde estão os halteres?" },
                 { frase: "I need a spotter.", traducao: "Eu preciso de um observador." }
             ],
-            dialogoInicial: "Hey there! Welcome to Fitness Plus. Are you new here? Can I help you with anything?",
+            dialogoInicial: "Hey! Ready to crush your workout? I'm here if you need tips. Are you new to Fitness Plus?",
             respostas: [
                 { usuario: "new", bot: "Welcome! Let me show you around. We have cardio equipment on the first floor and weights on the second floor. What are your fitness goals?" },
                 { usuario: "muscle", bot: "Great! For building muscle, I recommend focusing on compound exercises like squats, deadlifts, and bench press. How experienced are you with weight training?" },
@@ -2627,7 +2673,7 @@ const cenarios = {
                 { frase: "Have you traveled anywhere interesting?", traducao: "Você viajou para algum lugar interessante?" },
                 { frase: "I really enjoy learning new things.", traducao: "Eu realmente gosto de aprender coisas novas." }
             ],
-            dialogoInicial: "Hey! Great to chat with you today. What would you like to talk about? We can discuss anything - your day, hobbies, travel, anything you're interested in!",
+            dialogoInicial: "Hey! It's always good to take a break and chat. What's on your mind today? We can talk about anything!",
             respostas: [
                 { usuario: "weekend", bot: "Nice! I hope you have fun plans. What do you usually do on weekends? Do you prefer staying home or going out?" },
                 { usuario: "family", bot: "That's wonderful! Family time is so important. Do you have siblings? What do you all like to do together?" },
@@ -2652,7 +2698,7 @@ const cenarios = {
                 { frase: "¿Puedo tener agua?", traducao: "Posso ter água?" },
                 { frase: "La cuenta, por favor.", traducao: "A conta, por favor." }
             ],
-            dialogoInicial: "¡Buenas tardes! Bienvenido a nuestro restaurante. ¿Está listo para ordenar o necesita unos minutos más?",
+            dialogoInicial: "¡Buenas noches! Le he guardado una mesa excelente. ¿Está listo para ordenar o le gustaría comenzar con algunas bebidas?",
             respuestas: [
                 { usuario: "menú", bot: "¡Aquí tiene nuestro menú! Tenemos una variedad de platos incluyendo pasta, carne, pescado y ensaladas. Nuestro especial de hoy es el salmon a la plancha. ¿Qué le gustaría?" },
                 { usuario: "recomienda", bot: "¡Le recomiendo nuestra famosa pasta carbonara o el salmon a la plancha! Ambos son excelentes opciones. ¿Cuál le parece mejor?" },
@@ -2675,7 +2721,7 @@ const cenarios = {
                 { frase: "¿Cuánto cuesta?", traducao: "Quanto custa?" },
                 { frase: "¿Puedo tener el recibo?", traducao: "Posso ter o recibo?" }
             ],
-            dialogoInicial: "¡Hola! Bienvenido a Café Casa. ¿Qué le puedo servir hoy?",
+            dialogoInicial: "¡Hola! Huele a café recién hecho aquí. ¿Qué puedo prepararle hoy?",
             respuestas: [
                 { usuario: "café", bot: "¡Claro! ¿Prefiere pequeño, mediano o grande? También tenemos opciones de leche de avena, almendra y soja." },
                 { usuario: "mediano", bot: "¡Perfecto! Un café con leche mediano. ¿Algo más? ¡Tenemos pasteles y magdalenas frescas también!" },
@@ -2698,7 +2744,7 @@ const cenarios = {
                 { frase: "¿Tiene esto en otra talla?", traducao: "Vocês têm isso em outro tamanho?" },
                 { frase: "¿Cuánto cuesta?", traducao: "Quanto custa?" }
             ],
-            dialogoInicial: "¡Hola! Bienvenida a Tienda Fashion. ¿Puedo ayudarla a encontrar algo hoy?",
+            dialogoInicial: "¡Hola! Acabamos de recibir novedades que creo que le encantarán. ¿Puedo ayudarle a encontrar un estilo específico?",
             respuestas: [
                 { usuario: "camisa", bot: "¡Claro! Tenemos una gran selección de camisas. ¿De qué color está buscando? Tenemos azul, blanco, rosa y negro." },
                 { usuario: "azul", bot: "¡Excelente elección! Esta camisa azul es muy popular. ¿Quiere probarse? Los probadores están allá." },
@@ -2721,7 +2767,7 @@ const cenarios = {
                 { frase: "¿Puedo tener asiento de ventana?", traducao: "Posso ter assento na janela?" },
                 { frase: "¿Mi vuelo está a tiempo?", traducao: "Meu voo está no horário?" }
             ],
-            dialogoInicial: "¡Buenos días! Bienvenido al aeropuerto. ¿Viene a hacer check-in para su vuelo?",
+            dialogoInicial: "¡Buenos días! ¿Vuela a algún lugar emocionante hoy? ¿Está haciendo el check-in?",
             respuestas: [
                 { usuario: "sí", bot: "¡Perfecto! ¿Puede mostrarme su pasaporte y confirmación de reserva, por favor? ¿A qué destino viaja hoy?" },
                 { usuario: "nueva york", bot: "¡Excelente! Vuelo 456 a Nueva York. Ya está registrado. ¿Prefiere asiento de pasillo o ventana?" },
@@ -2744,7 +2790,7 @@ const cenarios = {
                 { frase: "¿Puedo tener una llamada de despertador?", traducao: "Posso ter uma ligação de despertador?" },
                 { frase: "Quiero hacer check-out, por favor.", traducao: "Eu quero fazer check-out, por favor." }
             ],
-            dialogoInicial: "¡Bienvenido a Gran Hotel! ¿Tiene una reserva con nosotros?",
+            dialogoInicial: "¡Bienvenido al Gran Hotel! Estamos encantados de tenerle. ¿Tiene una reserva con nosotros?",
             respuestas: [
                 { usuario: "sí", bot: "¡Perfecto! ¿A nombre de quién está la reserva? La buscaré para usted." },
                 { usuario: "johnson", bot: "¡Aquí está! Señor Johnson, tiene una reserva por 3 noches. ¿Qué tipo de habitación prefiere - cama king o queen?" },
@@ -2767,7 +2813,7 @@ const cenarios = {
                 { frase: "Necesito ver a un médico.", traducao: "Eu preciso ver um médico." },
                 { frase: "Soy alérgico a...", traducao: "Eu sou alérgico a..." }
             ],
-            dialogoInicial: "¡Hola! Soy la enfermera Sarah. ¿Cómo puedo ayudarlo hoy? ¿Se siente bien?",
+            dialogoInicial: "Hola. Soy la enfermera Sarah. Estoy aquí para cuidarlo. ¿Puede decirme exactamente cómo se siente?",
             respuestas: [
                 { usuario: "cabeza", bot: "Lamento escuchar eso. ¿Cuánto tiempo tiene el dolor de cabeza? ¿Es un dolor agudo o sordo? ¿Tiene otros síntomas?" },
                 { usuario: "mañana", bot: "Entiendo. Déjeme verificar su temperatura. Por favor, abra la boca y diga 'aaaah'. Su temperatura es normal, eso es bueno." },
@@ -2790,7 +2836,7 @@ const cenarios = {
                 { frase: "¿Puedo ir al baño?", traducao: "Posso ir ao banheiro?" },
                 { frase: "Necesito ayuda con este ejercicio.", traducao: "Eu preciso de ajuda com este exercício." }
             ],
-            dialogoInicial: "¡Buenos días, clase! Hoy aprenderemos sobre la fotosíntesis. ¿Tiene alguien alguna pregunta antes de comenzar?",
+            dialogoInicial: "¡Buenos días, clase! El tema de hoy es fascinante. Antes de empezar, ¿alguien tiene preguntas sobre la tarea?",
             respuestas: [
                 { usuario: "pregunta", bot: "¡Claro! ¿Cuál es su pregunta? Estoy aquí para ayudarlo a entender el material." },
                 { usuario: "tarea", bot: "La tarea es leer el capítulo 5 y responder las preguntas de la 1 a la 5. Es para el próximo lunes. ¿Tiene alguna pregunta específica?" },
@@ -2813,7 +2859,7 @@ const cenarios = {
                 { frase: "¿Vienes aquí a menudo?", traducao: "Você vem aqui frequentemente?" },
                 { frase: "¿Quieres algo de beber?", traducao: "Você gostaria de algo para beber?" }
             ],
-            dialogoInicial: "¡Hola! Creo que no nos conocemos. Me llamo Alex. ¿Y tú? ¿Cómo te llamas?",
+            dialogoInicial: "¡Hola! La música es genial, ¿verdad? Soy Alex. Creo que no nos conocemos, ¿cómo te llamas?",
             respuestas: [
                 { usuario: "nombre", bot: "¡Mucho gusto, [nombre]! ¿Eres amigo del anfitrión o te acabas de mudar al barrio?" },
                 { usuario: "amigo", bot: "¡Genial! ¿Cuánto tiempo conoces a Sarah? Es una persona increíble, ¿verdad?" },
@@ -2836,7 +2882,7 @@ const cenarios = {
                 { frase: "Pagaré con tarjeta de crédito.", traducao: "Vou pagar com cartão de crédito." },
                 { frase: "¿Puedo tener una bolsa, por favor?", traducao: "Posso ter um saco, por favor?" }
             ],
-            dialogoInicial: "¡Hola! Bienvenido a Mercado Fresco. ¿Puedo ayudarlo a encontrar algo hoy?",
+            dialogoInicial: "¡Hola! Bienvenido a Mercado Fresco. Hoy tenemos grandes ofertas en frutas. ¿Puedo ayudarle a encontrar algo?",
             respuestas: [
                 { usuario: "leche", bot: "¡Claro! La leche está en la sección de lácteos, que está abajo en este pasillo a su izquierda. Tenemos entera, descremada y de almendra." },
                 { usuario: "almendra", bot: "¡Excelente elección! Nuestra leche de almendra está en oferta esta semana. Está en el mismo pasillo, aproximadamente a la mitad a la derecha." },
@@ -2859,7 +2905,7 @@ const cenarios = {
                 { frase: "¿Puedo tener palomitas grandes?", traducao: "Posso ter pipoca grande?" },
                 { frase: "¿Dónde está la sala 3?", traducao: "Onde é a sala 3?" }
             ],
-            dialogoInicial: "¡Bienvenido a Cine Ciudad! ¿Qué puedo hacer por usted hoy? ¿Boletos, bocadillos, o ambos?",
+            dialogoInicial: "¡Bienvenido a Cine Ciudad! Las palomitas están frescas y calientes. ¿Viene por boletos o bocadillos?",
             respuestas: [
                 { usuario: "boletos", bot: "¡Genial! ¿Qué película le gustaría ver? Tenemos acción, comedia, drama y terror hoy." },
                 { usuario: "acción", bot: "¡Perfecto! 'Héroe 4' está en funciones a las 14:00, 17:00 y 20:00. ¿Le gustaría boletos para alguna de esas funciones?" },
@@ -2882,7 +2928,7 @@ const cenarios = {
                 { frase: "¿Dónde están las pesas?", traducao: "Onde estão os halteres?" },
                 { frase: "Necesito un observador.", traducao: "Eu preciso de um observador." }
             ],
-            dialogoInicial: "¡Hola ahí! Bienvenido a Fitness Plus. ¿Es nuevo aquí? ¿Puedo ayudarlo con algo?",
+            dialogoInicial: "¡Hola! ¿Listo para arrasar en tu entrenamiento? Estoy aquí si necesitas consejos. ¿Eres nuevo en Fitness Plus?",
             respuestas: [
                 { usuario: "nuevo", bot: "¡Bienvenido! Déjeme mostrarle. Tenemos equipos cardiovasculares en el primer piso y pesas en el segundo. ¿Cuáles son sus metas de condición física?" },
                 { usuario: "músculo", bot: "¡Genial! Para construir músculo, recomiendo enfocarse en ejercicios compuestos como sentadillas, peso muerto y press de banco. ¿Qué experiencia tiene con el entrenamiento con pesas?" },
@@ -2905,7 +2951,7 @@ const cenarios = {
                 { frase: "¿Has viajado a algún lugar interesante?", traducao: "Você viajou para algum lugar interessante?" },
                 { frase: "Realmente me gusta aprender cosas nuevas.", traducao: "Eu realmente gosto de aprender coisas novas." }
             ],
-            dialogoInicial: "¡Hola! ¡Qué bueno charlar contigo hoy. De qué te gustaría hablar? Podemos discutir cualquier cosa: tu día, pasatiempos, viajes, ¡cualquier cosa que te interese!",
+            dialogoInicial: "¡Hola! Siempre es bueno tomar un descanso y charlar. ¿Qué tienes en mente hoy? ¡Podemos hablar de cualquier cosa!",
             respuestas: [
                 { usuario: "fin de semana", bot: "¡Genial! Espero que tengas planes divertidos. ¿Qué sueles hacer los fines de semana? ¿Prefieres quedarte en casa o salir?" },
                 { usuario: "familia", bot: "¡Eso es maravilloso! El tiempo en familia es muy importante. ¿Tienes hermanos? ¿Qué les gusta hacer juntos?" },
@@ -2961,7 +3007,6 @@ function iniciarReconhecimentoVoz() {
 
         reconhecimentoVoz.onresult = (event) => {
             const transcricao = event.results[0][0].transcript;
-            document.getElementById('input-idioma').value = transcricao;
             processarRespostaUsuario(transcricao);
         };
 
@@ -3027,8 +3072,11 @@ function selecionarIdioma(idioma) {
     idiomaAtual = idioma;
     
     // Atualizar UI
-    document.getElementById('lang-ingles').classList.toggle('active', idioma === 'ingles');
-    document.getElementById('lang-espanhol').classList.toggle('active', idioma === 'espanhol');
+    const btnIngles = document.getElementById('lang-ingles');
+    const btnEspanhol = document.getElementById('lang-espanhol');
+
+    btnIngles.className = idioma === 'ingles' ? 'btn btn-primary' : 'btn btn-secondary';
+    btnEspanhol.className = idioma === 'espanhol' ? 'btn btn-primary' : 'btn btn-secondary';
     
     // Reiniciar reconhecimento de voz com novo idioma
     if (reconhecimentoVoz) {
@@ -3045,6 +3093,7 @@ function selecionarIdioma(idioma) {
     // Limpar chat
     document.getElementById('chat-messages-idiomas').innerHTML = '';
     adicionarMensagemBot(cenario.dialogoInicial);
+    atualizarFraseSugerida();
 }
 
 // ==================== CENÁRIOS ====================
@@ -3082,6 +3131,7 @@ function iniciarCenario(cenario) {
     const chatMessages = document.getElementById('chat-messages-idiomas');
     chatMessages.innerHTML = '';
     adicionarMensagemBot(cenarioData.dialogoInicial);
+    atualizarFraseSugerida();
 }
 
 // ==================== CHAT ====================
@@ -3123,18 +3173,6 @@ function adicionarMensagemSystem(texto) {
     messageDiv.innerHTML = texto;
     chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-function enviarMensagemIdioma() {
-    const input = document.getElementById('input-idioma');
-    const resposta = input.value.trim();
-    
-    if (!resposta) return;
-    
-    adicionarMensagem(resposta, 'user');
-    input.value = '';
-    
-    processarRespostaUsuario(resposta);
 }
 
 function processarRespostaUsuario(resposta) {
@@ -3188,6 +3226,7 @@ function processarRespostaUsuario(resposta) {
                 adicionarMensagemBot(respostaBot);
                 LanguageDB.adicionarXP(10);
                 atualizarEstatisticas();
+                atualizarFraseSugerida();
             }, 1000);
         }, 1500);
     }, 500);
@@ -3260,52 +3299,54 @@ function mostrarFeedbackPronuncia(precisao, resposta) {
     LanguageDB.adicionarXP(15);
 }
 
+function atualizarFraseSugerida() {
+    const cenarioData = cenarios[idiomaAtual][cenarioAtual];
+    if (cenarioData && cenarioData.frasesUteis && cenarioData.frasesUteis.length > 0) {
+        const randomIndex = Math.floor(Math.random() * cenarioData.frasesUteis.length);
+        const frase = cenarioData.frasesUteis[randomIndex];
+        
+        const targetEl = document.getElementById('speech-target');
+        const transEl = document.getElementById('speech-translation');
+        
+        if (targetEl) targetEl.textContent = frase.frase;
+        if (transEl) transEl.textContent = frase.traducao;
+    }
+}
+
+function pularFrase() {
+    atualizarFraseSugerida();
+}
+
 // ==================== PROGRESSO ====================
 function carregarProgresso() {
-    const progresso = LanguageDB.carregar('progresso') || { xp: 0, nivel: 'iniciante' };
+    const progresso = LanguageDB.carregar('progresso') || { xp: 0, nivel: 1 };
     atualizarInterfaceProgresso(progresso);
 }
 
 function atualizarProgresso() {
-    const progresso = LanguageDB.carregar('progresso') || { xp: 0, nivel: 'iniciante' };
+    const progresso = LanguageDB.carregar('progresso') || { xp: 0, nivel: 1 };
     atualizarInterfaceProgresso(progresso);
 }
 
 function atualizarInterfaceProgresso(progresso) {
-    // Atualizar estágios
-    const stages = ['iniciante', 'basico', 'intermediario', 'avancado'];
-    const currentIndex = stages.indexOf(progresso.nivel);
+    // Garantir que o nível seja numérico
+    let nivel = typeof progresso.nivel === 'number' ? progresso.nivel : 1;
     
-    stages.forEach((stage, index) => {
-        const stageEl = document.getElementById(`stage-${stage}`);
-        if (stageEl) {
-            stageEl.classList.remove('active', 'completed');
-            if (index < currentIndex) {
-                stageEl.classList.add('completed');
-            } else if (index === currentIndex) {
-                stageEl.classList.add('active');
-            }
-        }
-    });
-    
-    // Atualizar nome do estágio atual
-    const nomesEstagios = {
-        iniciante: 'Iniciante',
-        basico: 'Básico',
-        intermediario: 'Intermediário',
-        avancado: 'Avançado'
-    };
-    document.getElementById('current-stage-name').textContent = nomesEstagios[progresso.nivel] || 'Iniciante';
-    
-    // Calcular progresso para o próximo nível
-    const limitesXP = { iniciante: 100, basico: 300, intermediario: 500, avancado: 1000 };
-    const limiteAtual = limitesXP[progresso.nivel] || 100;
-    const limiteProximo = limitesXP[stages[Math.min(stages.indexOf(progresso.nivel) + 1, 3)]] || 1000;
-    const progressoPercentual = Math.min(100, ((progresso.xp - limiteAtual) / (limiteProximo - limiteAtual)) * 100);
-    
-    document.getElementById('stage-progress-bar').style.width = `${progressoPercentual}%`;
-    document.getElementById('stage-progress-text').textContent = `${progresso.xp} / ${limiteProximo} XP`;
+    document.getElementById('user-level').textContent = nivel;
     document.getElementById('xp-points').textContent = `${progresso.xp} XP`;
+    
+    // Calcular barra de progresso (0 a 100 XP dentro do nível atual)
+    // Se nível >= 20, barra cheia
+    if (nivel >= 20) {
+        document.getElementById('level-progress-bar').style.width = '100%';
+        document.getElementById('xp-next-level').textContent = 'Nível Máximo';
+    } else {
+        const porcentagem = progresso.xp % 100;
+        const proximoAlvo = (Math.floor(progresso.xp / 100) + 1) * 100;
+        
+        document.getElementById('level-progress-bar').style.width = `${porcentagem}%`;
+        document.getElementById('xp-next-level').textContent = `Próx: ${proximoAlvo} XP`;
+    }
 }
 
 function atualizarEstatisticas() {
@@ -3435,7 +3476,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                                         <div class="form-group" style="margin-top: 20px;">
                                             <label>E-mail</label>
-                                            <input type="email" class="form-control" value="gabriel.hase@escola.com" disabled style="opacity: 0.7;">
+                                            <input type="email" class="form-control" id="config-email" disabled style="opacity: 0.7;">
                                         </div>
                                         <button class="btn btn-primary" onclick="salvarPerfil()">Salvar Alterações</button>
                                     </div>
@@ -3496,7 +3537,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                             Limpar Todo o Progresso Local
                                         </button>
                                         <div style="margin-top: 20px;">
-                                            <button class="btn btn-secondary" onclick="window.location.href='login.html'">
+                                            <button class="btn btn-secondary" onclick="logout()">
                                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                                                 Sair da Conta
                                             </button>
@@ -3699,6 +3740,28 @@ document.addEventListener('DOMContentLoaded', function() {
                     event.currentTarget.classList.add('active');
                 }
             };
+
+            // Carregar E-mail Salvo
+            const savedEmail = localStorage.getItem('dash_userEmail');
+            if (savedEmail) {
+                document.getElementById('config-email').value = savedEmail;
+            }
+
+            window.logout = function() {
+                localStorage.removeItem('dash_isLoggedIn');
+                window.location.href = 'login.html';
+            };
+        });
+
+        // ==================== LOADING SCREEN LOGIC ====================
+        window.addEventListener('load', function() {
+            const loader = document.getElementById('loader');
+            if (loader) {
+                // Adiciona um pequeno atraso para um efeito visual mais suave
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                }, 500); // 500ms de atraso
+            }
         });
     </script>
 </body>
